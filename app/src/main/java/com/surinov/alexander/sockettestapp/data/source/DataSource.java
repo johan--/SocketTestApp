@@ -1,5 +1,7 @@
 package com.surinov.alexander.sockettestapp.data.source;
 
+import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketData;
+
 import rx.Observable;
 
 public interface DataSource {
@@ -11,5 +13,5 @@ public interface DataSource {
 
     void sendData(String data);
 
-    Observable<String> getDataObservable();
+    Observable<WebSocketData> getDataObservable();
 }

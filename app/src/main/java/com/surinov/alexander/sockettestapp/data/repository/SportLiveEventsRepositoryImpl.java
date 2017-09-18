@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.utils.Logger;
+import com.surinov.alexander.sockettestapp.utils.rx.WebSocketErrorTransformer;
 
 import rx.Observable;
 import rx.Single;
@@ -24,6 +25,7 @@ public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
     @Override
     public Observable<String> requestSportLiveEventsObservable() {
         return mDataSource.getDataObservable()
+                .compose(WebSocketErrorTransformer.INSTANCE)
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -44,6 +46,7 @@ public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
     @Override
     public Single<String> requestSportEventsSingle() {
         return mDataSource.getDataObservable()
+                .compose(new WebSocketErrorTransformer())
                 .toSingle()
                 .doOnSubscribe(new Action0() {
                     @Override

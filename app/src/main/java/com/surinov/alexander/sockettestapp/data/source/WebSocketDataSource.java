@@ -3,6 +3,7 @@ package com.surinov.alexander.sockettestapp.data.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketData;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import okhttp3.OkHttpClient;
@@ -12,9 +13,12 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import rx.Observable;
 import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
 
 public class WebSocketDataSource implements DataSource {
+
+    private enum ConnectionState {
+        OPENED, CLOSED
+    }
 
     private static final String WEB_SOCKET_ENDPOINT = "wss://swarm.888.ru/";
 
@@ -24,22 +28,25 @@ public class WebSocketDataSource implements DataSource {
     private final OkHttpClient mOkHttpClient;
 
     @NonNull
-    private final Subject<String, String> mDataSubject;
+    private final PublishSubject<WebSocketData> mDataSubject = PublishSubject.create();
 
     @Nullable
     private WebSocket mWebSocket;
+
+    private volatile ConnectionState mConnectionState = ConnectionState.CLOSED;
 
     private WebSocketListener mWebSocketListener = new WebSocketListener() {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             Logger.d("WebSocketDataSource.WebSocketListener.onOpen");
+            mConnectionState = ConnectionState.OPENED;
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Logger.d("WebSocketDataSource.WebSocketListener.onMessage: " + text);
             if (mDataSubject.hasObservers()) {
-                mDataSubject.onNext(text);
+                mDataSubject.onNext(WebSocketData.success(text));
             }
         }
 
@@ -51,21 +58,22 @@ public class WebSocketDataSource implements DataSource {
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             Logger.d("WebSocketDataSource.WebSocketListener.onClosed");
-            mDataSubject.onCompleted();
-
+            mConnectionState = ConnectionState.CLOSED;
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Logger.d("WebSocketDataSource.WebSocketListener.onFailure: " + t);
-            mDataSubject.onError(t);
+            if (mDataSubject.hasObservers()) {
+                mDataSubject.onNext(WebSocketData.error(t));
+            }
+            mConnectionState = ConnectionState.CLOSED;
         }
     };
 
     public WebSocketDataSource(@NonNull OkHttpClient okHttpClient) {
         Logger.d("WebSocketDataSource.WebSocketDataSource(@NonNull OkHttpClient okHttpClient)");
         mOkHttpClient = okHttpClient;
-        mDataSubject = PublishSubject.create();
     }
 
     @Override
@@ -79,13 +87,12 @@ public class WebSocketDataSource implements DataSource {
         Logger.d("WebSocketDataSource.closeConnection");
         if (mWebSocket != null) {
             mWebSocket.close(1000, "Normal closure; the connection successfully completed whatever purpose for which it was created");
-            mWebSocket = null;
         }
     }
 
     @Override
     public boolean isConnectionOpened() {
-        return mWebSocket != null;
+        return mConnectionState == ConnectionState.OPENED;
     }
 
     @Override
@@ -97,13 +104,13 @@ public class WebSocketDataSource implements DataSource {
     }
 
     @Override
-    public Observable<String> getDataObservable() {
+    public Observable<WebSocketData> getDataObservable() {
         return mDataSubject;
     }
 
     private synchronized void openConnectionIfNeeded() {
         Logger.d("WebSocketDataSource.openConnectionIfNeeded");
-        if (mWebSocket != null) {
+        if (mConnectionState == ConnectionState.OPENED) {
             return;
         }
 
