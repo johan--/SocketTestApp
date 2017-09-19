@@ -1,17 +1,12 @@
 package com.surinov.alexander.sockettestapp.data.source;
 
-import com.surinov.alexander.sockettestapp.data.source.entity.Data;
+import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketResponse;
 
 import rx.Observable;
 
 public interface DataSource {
-    void openConnection();
 
-    void closeConnection();
+    void sendCommand(String command);
 
-    boolean isConnectionOpened();
-
-    void sendData(String data);
-
-    Observable<Data> getDataObservable();
+    Observable<WebSocketResponse> getDataObservable();
 }

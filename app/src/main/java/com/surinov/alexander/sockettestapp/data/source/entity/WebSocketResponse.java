@@ -3,8 +3,9 @@ package com.surinov.alexander.sockettestapp.data.source.entity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public class Data {
+public class WebSocketResponse {
 
+    @SuppressWarnings("WeakerAccess")
     public enum State {
         COMPLETED, NEXT, ERROR
     }
@@ -33,29 +34,29 @@ public class Data {
         return mThrowable;
     }
 
-    private Data(@NonNull State state, @NonNull String data, @Nullable Throwable throwable) {
+    private WebSocketResponse(@NonNull State state, @NonNull String data, @Nullable Throwable throwable) {
         mState = state;
         mData = data;
         mThrowable = throwable;
     }
 
-    private Data(State state, String data) {
+    private WebSocketResponse(State state, String data) {
         this(state, data, null);
     }
 
-    private Data(State state, Throwable throwable) {
+    private WebSocketResponse(State state, Throwable throwable) {
         this(state, "", throwable);
     }
 
-    public static Data error(Throwable throwable) {
-        return new Data(State.ERROR, throwable);
+    public static WebSocketResponse error(Throwable throwable) {
+        return new WebSocketResponse(State.ERROR, throwable);
     }
 
-    public static Data next(String data) {
-        return new Data(State.NEXT, data);
+    public static WebSocketResponse next(String data) {
+        return new WebSocketResponse(State.NEXT, data);
     }
 
-    public static Data competed() {
-        return new Data(State.COMPLETED, "");
+    public static WebSocketResponse competed() {
+        return new WebSocketResponse(State.COMPLETED, "");
     }
 }

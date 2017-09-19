@@ -31,7 +31,7 @@ public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
                     public void call() {
                         Logger.d("SportLiveEventsRepositoryImpl.requestSportLiveEventsObservable.doOnSubscribe");
                         // perform initial request for data with updates for web socket
-                        mDataSource.sendData(REQUEST_SPORT_LIVE_EVENTS);
+                        mDataSource.sendCommand(REQUEST_SPORT_LIVE_EVENTS);
                     }
                 })
                 .doOnUnsubscribe(new Action0() {
@@ -52,7 +52,7 @@ public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
                     @Override
                     public void call() {
                         // perform initial request for data WITHOUT updates for web socket
-                        mDataSource.sendData(REQUEST_SPORT_LIVE_EVENTS);
+                        mDataSource.sendCommand(REQUEST_SPORT_LIVE_EVENTS);
                     }
                 })
                 .doOnSubscribe(new Action0() {
