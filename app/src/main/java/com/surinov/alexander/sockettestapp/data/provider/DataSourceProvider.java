@@ -1,4 +1,4 @@
-package com.surinov.alexander.sockettestapp.data;
+package com.surinov.alexander.sockettestapp.data.provider;
 
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.data.source.WebSocketDataSource;

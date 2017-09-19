@@ -14,7 +14,7 @@ public class WebSocketResponse {
     private final State mState;
 
     @NonNull
-    private final String mData;
+    private final String mResponse;
 
     @Nullable
     private final Throwable mThrowable;
@@ -25,8 +25,8 @@ public class WebSocketResponse {
     }
 
     @NonNull
-    public String getData() {
-        return mData;
+    public String getResponse() {
+        return mResponse;
     }
 
     @Nullable
@@ -34,14 +34,14 @@ public class WebSocketResponse {
         return mThrowable;
     }
 
-    private WebSocketResponse(@NonNull State state, @NonNull String data, @Nullable Throwable throwable) {
+    private WebSocketResponse(@NonNull State state, @NonNull String response, @Nullable Throwable throwable) {
         mState = state;
-        mData = data;
+        mResponse = response;
         mThrowable = throwable;
     }
 
-    private WebSocketResponse(State state, String data) {
-        this(state, data, null);
+    private WebSocketResponse(State state, String response) {
+        this(state, response, null);
     }
 
     private WebSocketResponse(State state, Throwable throwable) {

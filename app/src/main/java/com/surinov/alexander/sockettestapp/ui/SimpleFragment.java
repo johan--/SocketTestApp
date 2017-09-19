@@ -8,12 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.surinov.alexander.sockettestapp.R;
-import com.surinov.alexander.sockettestapp.data.DataSourceProvider;
+import com.surinov.alexander.sockettestapp.data.provider.DataSourceProvider;
 import com.surinov.alexander.sockettestapp.data.repository.SportEventsRepository;
 import com.surinov.alexander.sockettestapp.data.repository.SportLiveEventsRepositoryImpl;
+import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketJsonData;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
-import rx.SingleSubscriber;
 import rx.Subscriber;
 import rx.Subscription;
 
@@ -48,11 +48,11 @@ public class SimpleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Logger.d("SimpleFragment.onViewCreated");
 
-        final View openConnectionButton = view.findViewById(R.id.openConnectionButton);
-        openConnectionButton.setOnClickListener(new View.OnClickListener() {
+        final View requestButton = view.findViewById(R.id.requestButton);
+        requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openConnection();
+                performRequest();
             }
         });
 
@@ -65,41 +65,27 @@ public class SimpleFragment extends Fragment {
         });
     }
 
-    private void openConnection() {
-        final boolean requestDataWithUpdates = getArguments().getBoolean(BUNDLE_REQUEST_DATA_WITH_UPDATES, false);
+    private void performRequest() {
+        unsubscribe();
 
-        if (requestDataWithUpdates) {
-            mSubscription = mSportEventsRepository.requestSportLiveEventsObservable()
-                    .subscribe(new Subscriber<String>() {
-                        @Override
-                        public void onCompleted() {
-                            Logger.d("SimpleFragment.openConnection.requestSportLiveEventsObservable.onCompleted");
-                        }
+        mSubscription = mSportEventsRepository.requestSportLiveEventsObservable(1)
+                .subscribe(new Subscriber<WebSocketJsonData>() {
+                    @Override
+                    public void onCompleted() {
+                        Logger.d("SimpleFragment.performRequest.requestSportLiveEventsObservable.onCompleted");
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Logger.d("SimpleFragment.openConnection.requestSportLiveEventsObservable.onError: " + e);
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.d("SimpleFragment.performRequest.requestSportLiveEventsObservable.onError: " + e);
+                    }
 
-                        @Override
-                        public void onNext(String s) {
-                            Logger.d("SimpleFragment.openConnection.requestSportLiveEventsObservable.onNext: " + s);
-                        }
-                    });
-        } else {
-            mSubscription = mSportEventsRepository.requestSportEventsSingle()
-                    .subscribe(new SingleSubscriber<String>() {
-                        @Override
-                        public void onSuccess(String s) {
-                            Logger.d("SimpleFragment.openConnection.requestSportEventsSingle.onSuccess: " + s);
-                        }
+                    @Override
+                    public void onNext(WebSocketJsonData s) {
+                        Logger.d("SimpleFragment.performRequest.requestSportLiveEventsObservable.onNext: " + s);
+                    }
+                });
 
-                        @Override
-                        public void onError(Throwable error) {
-                            Logger.d("SimpleFragment.openConnection.requestSportEventsSingle.onError: " + error);
-                        }
-                    });
-        }
     }
 
     private void closeConnection() {

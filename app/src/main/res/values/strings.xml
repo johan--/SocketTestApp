@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">SocketTestApp</string>
-    <string name="open_socket_connection">Open socket connection</string>
+    <string name="perform_request">Perform request</string>
     <string name="close_socket_connection">Close socket connection</string>
 </resources>

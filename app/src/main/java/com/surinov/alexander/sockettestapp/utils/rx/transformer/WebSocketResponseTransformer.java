@@ -1,4 +1,4 @@
-package com.surinov.alexander.sockettestapp.utils.rx;
+package com.surinov.alexander.sockettestapp.utils.rx.transformer;
 
 
 import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketResponse;
@@ -6,9 +6,13 @@ import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketResponse;
 import rx.Observable;
 import rx.functions.Func1;
 
-public class WebSocketDataTransformer implements Observable.Transformer<WebSocketResponse, String> {
+public class WebSocketResponseTransformer implements Observable.Transformer<WebSocketResponse, String> {
 
-    public static final WebSocketDataTransformer INSTANCE = new WebSocketDataTransformer();
+    public static final WebSocketResponseTransformer INSTANCE = new WebSocketResponseTransformer();
+
+    private WebSocketResponseTransformer() {
+
+    }
 
     @Override
     public Observable<String> call(Observable<WebSocketResponse> source) {
@@ -21,7 +25,7 @@ public class WebSocketDataTransformer implements Observable.Transformer<WebSocke
                     case ERROR:
                         return Observable.error(webSocketData.getThrowable());
                     case NEXT:
-                        return Observable.just(webSocketData.getData());
+                        return Observable.just(webSocketData.getResponse());
                     default:
                         throw new RuntimeException("Unknown data state: " + webSocketData.getState());
                 }
