@@ -3,7 +3,7 @@ package com.surinov.alexander.sockettestapp.data.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketResponse;
+import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import okhttp3.OkHttpClient;

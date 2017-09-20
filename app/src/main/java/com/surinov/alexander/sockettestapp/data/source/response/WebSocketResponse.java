@@ -1,4 +1,4 @@
-package com.surinov.alexander.sockettestapp.data.source.entity;
+package com.surinov.alexander.sockettestapp.data.source.response;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

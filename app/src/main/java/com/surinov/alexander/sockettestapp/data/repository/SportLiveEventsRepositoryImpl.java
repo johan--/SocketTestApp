@@ -2,14 +2,18 @@ package com.surinov.alexander.sockettestapp.data.repository;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
+import com.surinov.alexander.sockettestapp.data.source.response.sport.SwarmSportListResponse;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.SwarmResponseFilterTransformer;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketResponseTransformer;
 
 import rx.Observable;
 import rx.functions.Action0;
+import rx.functions.Func1;
 
 public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
 
@@ -24,10 +28,17 @@ public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
     }
 
     @Override
-    public Observable<JsonObject> requestSportLiveEventsObservable(long requestId) {
+    public Observable<SwarmSportListResponse> requestSportLiveEventsObservable(long requestId) {
         return mDataSource.getWebSocketResponseObservable()
                 .compose(WebSocketResponseTransformer.INSTANCE)
                 .compose(new SwarmResponseFilterTransformer(requestId))
+                .map(new Func1<JsonObject, SwarmSportListResponse>() {
+                    @Override
+                    public SwarmSportListResponse call(JsonObject jsonObject) {
+                        Gson gson = GsonProvider.provideGson();
+                        return gson.fromJson(jsonObject, SwarmSportListResponse.class);
+                    }
+                })
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

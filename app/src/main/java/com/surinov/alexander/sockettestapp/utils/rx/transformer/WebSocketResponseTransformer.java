@@ -3,7 +3,7 @@ package com.surinov.alexander.sockettestapp.utils.rx.transformer;
 
 import com.google.gson.Gson;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
-import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketResponse;
+import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 import com.surinov.alexander.sockettestapp.data.source.response.SwarmResponse;
 
 import rx.Observable;
@@ -14,7 +14,7 @@ public class WebSocketResponseTransformer implements Observable.Transformer<WebS
     public static final WebSocketResponseTransformer INSTANCE = new WebSocketResponseTransformer();
 
     private WebSocketResponseTransformer() {
-        // WebSocketResponseTransformer is single instance class
+        // WebSocketResponseTransformer is a single instance class
     }
 
     @Override

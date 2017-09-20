@@ -1,6 +1,6 @@
 package com.surinov.alexander.sockettestapp.data.source;
 
-import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketResponse;
+import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 
 import rx.Observable;
 

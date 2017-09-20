@@ -1,10 +1,10 @@
 package com.surinov.alexander.sockettestapp.data.repository;
 
-import com.google.gson.JsonObject;
+import com.surinov.alexander.sockettestapp.data.source.response.sport.SwarmSportListResponse;
 
 import rx.Observable;
 
 public interface SportEventsRepository {
 
-    Observable<JsonObject> requestSportLiveEventsObservable(long requestId);
+    Observable<SwarmSportListResponse> requestSportLiveEventsObservable(long requestId);
 }
