@@ -7,6 +7,12 @@ public class WebSocketJsonData {
 
     public static final int UNSPECIFIED_REQUEST_ID = 0;
 
+    private WebSocketJsonData(int code, long requestId, JsonObject jsonObject) {
+        mCode = code;
+        mRequestId = requestId;
+        mJsonObject = jsonObject;
+    }
+
     @SerializedName("code")
     private int mCode;
 
@@ -14,7 +20,7 @@ public class WebSocketJsonData {
     private long mRequestId;
 
     @SerializedName("data")
-    private JsonObject mJsonData;
+    private JsonObject mJsonObject;
 
     public int getCode() {
         return mCode;
@@ -24,8 +30,12 @@ public class WebSocketJsonData {
         return mRequestId;
     }
 
-    public JsonObject getJsonData() {
-        return mJsonData;
+    public JsonObject getJsonObject() {
+        return mJsonObject;
+    }
+
+    public WebSocketJsonData withNewJsonData(JsonObject jsonData) {
+        return new WebSocketJsonData(mCode, mRequestId, jsonData);
     }
 
     @Override
@@ -33,7 +43,7 @@ public class WebSocketJsonData {
         return "WebSocketJsonData{" +
                 "mCode=" + mCode +
                 ", mRequestId=" + mRequestId +
-                ", mJsonData=" + mJsonData +
+                ", mJsonObject=" + mJsonObject +
                 '}';
     }
 }
