@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
+import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 import com.surinov.alexander.sockettestapp.data.source.response.sport.SwarmSportListResponse;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.SwarmResponseFilterTransformer;
@@ -13,6 +14,7 @@ import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketRespons
 
 import rx.Observable;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class SportLiveEventsRepositoryImpl implements SportEventsRepository {

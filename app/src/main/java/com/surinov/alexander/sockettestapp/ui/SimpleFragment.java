@@ -99,7 +99,6 @@ public class SimpleFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        unsubscribe();
     }
 
     private void unsubscribe() {

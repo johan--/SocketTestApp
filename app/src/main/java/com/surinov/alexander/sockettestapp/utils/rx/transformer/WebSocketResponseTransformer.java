@@ -3,10 +3,11 @@ package com.surinov.alexander.sockettestapp.utils.rx.transformer;
 
 import com.google.gson.Gson;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
-import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 import com.surinov.alexander.sockettestapp.data.source.response.SwarmResponse;
+import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class WebSocketResponseTransformer implements Observable.Transformer<WebSocketResponse, SwarmResponse> {
@@ -18,27 +19,28 @@ public class WebSocketResponseTransformer implements Observable.Transformer<WebS
     }
 
     @Override
-    public Observable<SwarmResponse> call(Observable<WebSocketResponse> source) {
-        return source.flatMap(new Func1<WebSocketResponse, Observable<String>>() {
-            @Override
-            public Observable<String> call(WebSocketResponse webSocketData) {
-                switch (webSocketData.getState()) {
-                    case COMPLETED:
-                        return Observable.empty();
-                    case ERROR:
-                        return Observable.error(webSocketData.getThrowable());
-                    case NEXT:
-                        return Observable.just(webSocketData.getResponse());
-                    default:
-                        throw new RuntimeException("Unknown data state: " + webSocketData.getState());
-                }
-            }
-        }).map(new Func1<String, SwarmResponse>() {
-            @Override
-            public SwarmResponse call(String jsonString) {
-                Gson gson = GsonProvider.provideGson();
-                return gson.fromJson(jsonString, SwarmResponse.class);
-            }
-        });
+    public Observable<SwarmResponse> call(final Observable<WebSocketResponse> source) {
+        return source
+                .doOnNext(new Action1<WebSocketResponse>() {
+                    @Override
+                    public void call(WebSocketResponse webSocketResponse) {
+                        if (webSocketResponse.getState() == WebSocketResponse.State.ERROR) {
+                            throw new RuntimeException(webSocketResponse.getThrowable());
+                        }
+                    }
+                })
+                .takeWhile(new Func1<WebSocketResponse, Boolean>() {
+                    @Override
+                    public Boolean call(WebSocketResponse webSocketResponse) {
+                        return webSocketResponse.getState() == WebSocketResponse.State.NEXT;
+                    }
+                })
+                .map(new Func1<WebSocketResponse, SwarmResponse>() {
+                    @Override
+                    public SwarmResponse call(WebSocketResponse swarmResponse) {
+                        Gson gson = GsonProvider.provideGson();
+                        return gson.fromJson(swarmResponse.getResponse(), SwarmResponse.class);
+                    }
+                });
     }
 }
