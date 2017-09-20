@@ -6,7 +6,7 @@ import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketJsonData;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 import com.surinov.alexander.sockettestapp.utils.rx.FilterWebSocketJsonData;
-import com.surinov.alexander.sockettestapp.utils.rx.transformer.FilterWebSocketJsonDataTransformer;
+import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketFilterJsonDataTransformer;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketResponseTransformer;
 
 import rx.Observable;
@@ -28,7 +28,7 @@ public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
     public Observable<WebSocketJsonData> requestSportLiveEventsObservable(long requestId) {
         return mDataSource.getDataObservable()
                 .compose(WebSocketResponseTransformer.INSTANCE)
-                .compose(new FilterWebSocketJsonDataTransformer(new FilterWebSocketJsonData(requestId), mDataSource))
+                .compose(new WebSocketFilterJsonDataTransformer(new FilterWebSocketJsonData(requestId), mDataSource))
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

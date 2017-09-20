@@ -12,7 +12,7 @@ import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Func1;
 
-public class FilterWebSocketJsonDataTransformer implements Observable.Transformer<WebSocketJsonData, WebSocketJsonData> {
+public class WebSocketFilterJsonDataTransformer implements Observable.Transformer<WebSocketJsonData, WebSocketJsonData> {
 
     @NonNull
     private final FilterWebSocketJsonData mFilter;
@@ -20,7 +20,7 @@ public class FilterWebSocketJsonDataTransformer implements Observable.Transforme
     @NonNull
     private final DataSource mDataSource;
 
-    public FilterWebSocketJsonDataTransformer(@NonNull FilterWebSocketJsonData filter,
+    public WebSocketFilterJsonDataTransformer(@NonNull FilterWebSocketJsonData filter,
                                               @NonNull DataSource dataSource) {
         mFilter = filter;
         mDataSource = dataSource;
@@ -51,7 +51,7 @@ public class FilterWebSocketJsonDataTransformer implements Observable.Transforme
                         String subId = mFilter.getSubId();
                         if (!subId.equals(FilterWebSocketJsonData.UNSPECIFIED_SUB_ID)) {
                             // TODO: 20.09.2017 send command for unsubscription
-                            Logger.d("FilterWebSocketJsonDataTransformer.doOnUnsubscribe: unsubscribe from updates!");
+                            Logger.d("WebSocketFilterJsonDataTransformer.doOnUnsubscribe: unsubscribe from updates!");
                         }
                     }
                 });
