@@ -3,6 +3,7 @@ package com.surinov.alexander.sockettestapp.data.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.surinov.alexander.sockettestapp.data.source.request.SwarmSessionRequest;
 import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
@@ -93,10 +94,10 @@ public class WebSocketDataSource implements DataSource, ConnectionControl {
     }
 
     @Override
-    public synchronized void sendCommand(String command) {
+    public synchronized void sendRequest(String request) {
         openConnectionIfNeeded();
         if (mWebSocket != null) {
-            mWebSocket.send(command);
+            mWebSocket.send(request);
         }
     }
 
@@ -124,7 +125,7 @@ public class WebSocketDataSource implements DataSource, ConnectionControl {
                 .url(WEB_SOCKET_ENDPOINT)
                 .build();
 
-        mWebSocket = mOkHttpClient.newWebSocket(openConnectionRequest, mWebSocketListener); // open connection
-        mWebSocket.send(REQUEST_SESSION_COMMAND); // request session
+        WebSocket webSocket = mWebSocket = mOkHttpClient.newWebSocket(openConnectionRequest, mWebSocketListener); // open connection
+        webSocket.send(SwarmSessionRequest.INSTANCE.toJsonString()); // request session
     }
 }

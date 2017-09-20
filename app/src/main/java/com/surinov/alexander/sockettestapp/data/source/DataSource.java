@@ -6,7 +6,7 @@ import rx.Observable;
 
 public interface DataSource {
 
-    void sendCommand(String command);
+    void sendRequest(String request);
 
     Observable<WebSocketResponse> getWebSocketResponseObservable();
 }

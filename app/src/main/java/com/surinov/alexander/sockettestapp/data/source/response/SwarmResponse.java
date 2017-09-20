@@ -19,7 +19,7 @@ public class SwarmResponse {
 
     @Nullable
     @SerializedName("data")
-    private JsonObject mData;
+    private JsonObject mData; // TODO: 20.09.2017 handle null 'data' field
 
     @Nullable
     @SerializedName("msg")

@@ -13,6 +13,7 @@ public class GsonProvider {
                 gson = sGson;
                 if (gson == null) {
                     GsonBuilder gsonBuilder = new GsonBuilder();
+                    gsonBuilder.serializeNulls();
 
                     // configure GsonBuilder
                     // ...
