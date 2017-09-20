@@ -1,15 +1,8 @@
 package com.surinov.alexander.sockettestapp.data.source.response.sport;
 
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 public class SwarmSportResponse {
-
-    public static final Type TYPE = new TypeToken<List<SwarmSportResponse>>() {
-    }.getType();
 
     @SerializedName("id")
     private int mId;
