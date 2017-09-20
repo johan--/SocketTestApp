@@ -1,11 +1,10 @@
 package com.surinov.alexander.sockettestapp.data.repository;
 
-import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketJsonData;
+import com.google.gson.JsonObject;
 
 import rx.Observable;
-import rx.Single;
 
 public interface SportEventsRepository {
 
-    Observable<WebSocketJsonData> requestSportLiveEventsObservable(long requestId);
+    Observable<JsonObject> requestSportLiveEventsObservable(long requestId);
 }

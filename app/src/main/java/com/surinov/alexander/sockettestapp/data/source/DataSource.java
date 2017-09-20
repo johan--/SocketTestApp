@@ -8,5 +8,5 @@ public interface DataSource {
 
     void sendCommand(String command);
 
-    Observable<WebSocketResponse> getDataObservable();
+    Observable<WebSocketResponse> getWebSocketResponseObservable();
 }

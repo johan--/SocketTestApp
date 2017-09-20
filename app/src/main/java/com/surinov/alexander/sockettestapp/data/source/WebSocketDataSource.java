@@ -28,7 +28,7 @@ public class WebSocketDataSource implements DataSource, ConnectionControl {
     private final OkHttpClient mOkHttpClient;
 
     @NonNull
-    private final PublishSubject<WebSocketResponse> mDataSubject = PublishSubject.create();
+    private final PublishSubject<WebSocketResponse> mWebSocketResponseSubject = PublishSubject.create();
 
     @Nullable
     private WebSocket mWebSocket;
@@ -45,7 +45,7 @@ public class WebSocketDataSource implements DataSource, ConnectionControl {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Logger.d("WebSocketDataSource.WebSocketListener.onMessage: " + text);
-            pushDataIfHasObservers(WebSocketResponse.next(text), mDataSubject);
+            pushDataIfHasObservers(WebSocketResponse.next(text), mWebSocketResponseSubject);
         }
 
         @Override
@@ -56,14 +56,14 @@ public class WebSocketDataSource implements DataSource, ConnectionControl {
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             Logger.d("WebSocketDataSource.WebSocketListener.onClosed");
-            pushDataIfHasObservers(WebSocketResponse.competed(), mDataSubject);
+            pushDataIfHasObservers(WebSocketResponse.competed(), mWebSocketResponseSubject);
             mConnectionState = ConnectionState.CLOSED;
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Logger.d("WebSocketDataSource.WebSocketListener.onFailure: " + t);
-            pushDataIfHasObservers(WebSocketResponse.error(t), mDataSubject);
+            pushDataIfHasObservers(WebSocketResponse.error(t), mWebSocketResponseSubject);
             mConnectionState = ConnectionState.CLOSED;
         }
     };
@@ -101,11 +101,12 @@ public class WebSocketDataSource implements DataSource, ConnectionControl {
     }
 
     @Override
-    public Observable<WebSocketResponse> getDataObservable() {
-        return mDataSubject;
+    public Observable<WebSocketResponse> getWebSocketResponseObservable() {
+        return mWebSocketResponseSubject;
     }
 
-    private void pushDataIfHasObservers(@NonNull WebSocketResponse webSocketData, @NonNull PublishSubject<WebSocketResponse> subject) {
+    private void pushDataIfHasObservers(@NonNull WebSocketResponse webSocketData,
+                                        @NonNull PublishSubject<WebSocketResponse> subject) {
         if (subject.hasObservers()) {
             subject.onNext(webSocketData);
         }

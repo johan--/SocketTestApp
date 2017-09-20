@@ -2,11 +2,10 @@ package com.surinov.alexander.sockettestapp.data.repository;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
-import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketJsonData;
 import com.surinov.alexander.sockettestapp.utils.Logger;
-import com.surinov.alexander.sockettestapp.utils.rx.FilterWebSocketJsonData;
-import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketFilterJsonDataTransformer;
+import com.surinov.alexander.sockettestapp.utils.rx.transformer.SwarmResponseFilterTransformer;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketResponseTransformer;
 
 import rx.Observable;
@@ -25,10 +24,10 @@ public class SportLiveEventsRepositoryImpl implements SportEventsRepository {
     }
 
     @Override
-    public Observable<WebSocketJsonData> requestSportLiveEventsObservable(long requestId) {
-        return mDataSource.getDataObservable()
+    public Observable<JsonObject> requestSportLiveEventsObservable(long requestId) {
+        return mDataSource.getWebSocketResponseObservable()
                 .compose(WebSocketResponseTransformer.INSTANCE)
-                .compose(new WebSocketFilterJsonDataTransformer(new FilterWebSocketJsonData(requestId), mDataSource))
+                .compose(new SwarmResponseFilterTransformer(requestId))
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

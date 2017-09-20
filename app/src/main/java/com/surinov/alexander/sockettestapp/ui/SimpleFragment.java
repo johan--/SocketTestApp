@@ -7,11 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.R;
 import com.surinov.alexander.sockettestapp.data.provider.DataSourceProvider;
 import com.surinov.alexander.sockettestapp.data.repository.SportEventsRepository;
 import com.surinov.alexander.sockettestapp.data.repository.SportLiveEventsRepositoryImpl;
-import com.surinov.alexander.sockettestapp.data.source.entity.WebSocketJsonData;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import rx.Subscriber;
@@ -69,7 +69,7 @@ public class SimpleFragment extends Fragment {
         unsubscribe();
 
         mSubscription = mSportEventsRepository.requestSportLiveEventsObservable(1)
-                .subscribe(new Subscriber<WebSocketJsonData>() {
+                .subscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
                         Logger.d("SimpleFragment.performRequest.requestSportLiveEventsObservable.onCompleted");
@@ -81,7 +81,7 @@ public class SimpleFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(WebSocketJsonData s) {
+                    public void onNext(JsonObject s) {
                         Logger.d("SimpleFragment.performRequest.requestSportLiveEventsObservable.onNext: " + s);
                     }
                 });
