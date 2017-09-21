@@ -29,10 +29,10 @@ public class WebSocketResponseTransformer implements Observable.Transformer<WebS
                         }
                     }
                 })
-                .takeWhile(new Func1<WebSocketResponse, Boolean>() {
+                .takeUntil(new Func1<WebSocketResponse, Boolean>() {
                     @Override
                     public Boolean call(WebSocketResponse webSocketResponse) {
-                        return webSocketResponse.getState() == WebSocketResponse.State.NEXT;
+                        return webSocketResponse.getState() == WebSocketResponse.State.COMPLETED;
                     }
                 })
                 .map(new Func1<WebSocketResponse, SwarmResponse>() {

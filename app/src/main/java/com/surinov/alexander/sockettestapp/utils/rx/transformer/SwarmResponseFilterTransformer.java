@@ -1,6 +1,7 @@
 package com.surinov.alexander.sockettestapp.utils.rx.transformer;
 
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.surinov.alexander.sockettestapp.data.source.SwarmException;
@@ -27,21 +28,20 @@ public class SwarmResponseFilterTransformer implements Observable.Transformer<Sw
         return source.filter(new Func1<SwarmResponse, Boolean>() {
             @Override
             public Boolean call(SwarmResponse swarmResponse) {
-                JsonObject jsonData = swarmResponse.getData();
-                if (jsonData == null) {
-                    return false;
-                }
+                JsonElement jsonData = swarmResponse.getData();
 
                 if (swarmResponse.getRequestId() == mRequestId) {
-                    JsonPrimitive subId = jsonData.getAsJsonPrimitive("subid");
-                    if (subId != null && subId.isString()) {
-                        mSubId = subId.getAsString();
+                    if (jsonData.isJsonObject()) {
+                        JsonPrimitive subId = jsonData.getAsJsonObject().getAsJsonPrimitive("subid");
+                        if (subId != null && subId.isString()) {
+                            mSubId = subId.getAsString();
+                        }
                     }
 
                     return true;
                 }
 
-                return jsonData.has(mSubId);
+                return jsonData.isJsonObject() && jsonData.getAsJsonObject().has(mSubId);
             }
         }).doOnNext(new Action1<SwarmResponse>() {
             @Override
@@ -53,13 +53,13 @@ public class SwarmResponseFilterTransformer implements Observable.Transformer<Sw
         }).map(new Func1<SwarmResponse, JsonObject>() {
             @Override
             public JsonObject call(SwarmResponse swarmResponse) {
-                JsonObject jsonData = swarmResponse.getData();
+                JsonObject jsonObject = swarmResponse.getData().getAsJsonObject();
 
                 //noinspection ConstantConditions
-                if (jsonData.has(mSubId)) {
-                    return jsonData.getAsJsonObject(mSubId);
+                if (jsonObject.has(mSubId)) {
+                    return jsonObject.getAsJsonObject(mSubId);
                 } else {
-                    return jsonData.getAsJsonObject("data");
+                    return jsonObject.getAsJsonObject("data");
                 }
             }
         });

@@ -2,7 +2,7 @@ package com.surinov.alexander.sockettestapp.data.source.response;
 
 import android.support.annotation.Nullable;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 public class SwarmResponse {
@@ -17,9 +17,8 @@ public class SwarmResponse {
     @SerializedName("rid")
     private long mRequestId = UNSPECIFIED_REQUEST_ID;
 
-    @Nullable
     @SerializedName("data")
-    private JsonObject mData; // TODO: 20.09.2017 handle null 'data' field
+    private JsonElement mData; // TODO: 20.09.2017 handle null 'data' field
 
     @Nullable
     @SerializedName("msg")
@@ -33,8 +32,7 @@ public class SwarmResponse {
         return mRequestId;
     }
 
-    @Nullable
-    public JsonObject getData() {
+    public JsonElement getData() {
         return mData;
     }
 
