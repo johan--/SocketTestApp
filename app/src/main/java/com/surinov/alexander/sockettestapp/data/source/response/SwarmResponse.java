@@ -18,7 +18,7 @@ public class SwarmResponse {
     private long mRequestId = UNSPECIFIED_REQUEST_ID;
 
     @SerializedName("data")
-    private JsonElement mData; // TODO: 20.09.2017 handle null 'data' field
+    private JsonElement mData;
 
     @Nullable
     @SerializedName("msg")

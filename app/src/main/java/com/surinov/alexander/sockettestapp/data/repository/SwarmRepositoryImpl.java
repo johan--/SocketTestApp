@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
+import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
+import com.surinov.alexander.sockettestapp.data.source.request.SwarmUnsubscribeRequest;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.SwarmResponseFilterTransformer;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketResponseTransformer;
@@ -14,9 +16,6 @@ import rx.functions.Action0;
 
 public class SwarmRepositoryImpl implements SwarmRepository {
 
-    private static final String REQUEST_SPORT_LIVE_EVENTS =
-            "{\"command\":\"get\",\"rid\": 1,\"params\":{\"source\":\"betting\",\"where\":{\"game\":{\"type\":1}},\"what\":{\"game\":\"@count\",\"sport\":[]},\"subscribe\":true}}";
-
     @NonNull
     private final DataSource mDataSource;
 
@@ -25,9 +24,9 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     @Override
-    public Observable<JsonObject> requestSwarmDataWithUpdates(long requestId) {
+    public Observable<JsonObject> requestSwarmDataWithUpdates(final SwarmRequest swarmRequest) {
         final SwarmResponseFilterTransformer swarmResponseFilterTransformer =
-                new SwarmResponseFilterTransformer(requestId);
+                new SwarmResponseFilterTransformer(swarmRequest.gerRequestId());
 
         return mDataSource.getWebSocketResponseObservable()
                 .compose(WebSocketResponseTransformer.INSTANCE)
@@ -36,8 +35,7 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                     @Override
                     public void call() {
                         Logger.d("SportLiveEventsRepositoryImpl.requestSwarmDataWithUpdates.doOnSubscribe");
-                        // perform initial request for data with updates for web socket
-                        mDataSource.sendRequest(REQUEST_SPORT_LIVE_EVENTS);
+                        sendRequest(swarmRequest);
                     }
                 })
                 .doOnUnsubscribe(new Action0() {
@@ -46,26 +44,33 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                         Logger.d("SportLiveEventsRepositoryImpl.requestSwarmDataWithUpdates.doOnUnsubscribe");
                         if (mDataSource.isConnectionOpened()) {
                             String subId = swarmResponseFilterTransformer.getSubId();
-                            Logger.d("SportLiveEventsRepositoryImpl.requestSwarmDataWithUpdates.doOnUnsubscribe: send unsubscribe = " + subId);
-
+                            if (!subId.equals(SwarmResponseFilterTransformer.UNSPECIFIED_SUB_ID)) {
+                                sendRequest(new SwarmUnsubscribeRequest(subId));
+                                Logger.d("SportLiveEventsRepositoryImpl.requestSwarmDataWithUpdates.doOnUnsubscribe: send unsubscribe = " + subId);
+                            }
                         }
                     }
                 });
     }
 
     @Override
-    public Single<JsonObject> requestSwarmData(long requestId) {
+    public Single<JsonObject> requestSwarmData(final SwarmRequest swarmRequest) {
         return mDataSource.getWebSocketResponseObservable()
                 .compose(WebSocketResponseTransformer.INSTANCE)
-                .compose(new SwarmResponseFilterTransformer(requestId))
+                .compose(new SwarmResponseFilterTransformer(swarmRequest.gerRequestId()))
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         Logger.d("SportLiveEventsRepositoryImpl.requestSwarmData.doOnSubscribe");
-                        mDataSource.sendRequest(REQUEST_SPORT_LIVE_EVENTS);
+                        sendRequest(swarmRequest);
                     }
                 })
                 .take(1)
                 .toSingle();
+    }
+
+    private void sendRequest(SwarmRequest swarmRequest) {
+        String jsonSwarmRequest = swarmRequest.toJsonString();
+        mDataSource.sendRequest(jsonSwarmRequest);
     }
 }

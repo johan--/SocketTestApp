@@ -12,6 +12,8 @@ import com.surinov.alexander.sockettestapp.R;
 import com.surinov.alexander.sockettestapp.data.provider.DataSourceProvider;
 import com.surinov.alexander.sockettestapp.data.repository.SwarmRepository;
 import com.surinov.alexander.sockettestapp.data.repository.SwarmRepositoryImpl;
+import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
+import com.surinov.alexander.sockettestapp.data.source.request.SwarmSportRequest;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import rx.Subscriber;
@@ -86,7 +88,8 @@ public class SimpleFragment extends Fragment {
 //                    }
 //                });
 
-        mSubscription = mSwarmRepository.requestSwarmData(1)
+        SwarmRequest swarmRequest = new SwarmSportRequest(1, true);
+        mSubscription = mSwarmRepository.requestSwarmDataWithUpdates(swarmRequest)
                 .subscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {

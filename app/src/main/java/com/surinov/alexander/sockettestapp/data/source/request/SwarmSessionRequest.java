@@ -30,6 +30,11 @@ public class SwarmSessionRequest implements SwarmRequest {
         return GsonProvider.gson().toJson(this);
     }
 
+    @Override
+    public long gerRequestId() {
+        return 0;
+    }
+
     private static class Params {
 
         @SerializedName("language")
