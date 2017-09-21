@@ -9,7 +9,7 @@ import okhttp3.OkHttpClient;
 public class DataSourceProvider {
     private static volatile OkHttpClient sOkHttpClient;
 
-    private static volatile WebSocketDataSource sDataSource;
+    private static volatile DataSource sDataSource;
 
     private static OkHttpClient provideOkHttpClientInstance() {
         Logger.d("DataSourceProvider.provideOkHttpClientInstance");
@@ -33,17 +33,17 @@ public class DataSourceProvider {
         return okHttpClient;
     }
 
-    public static WebSocketDataSource provideWebSocketDataSourceInstance() {
-        Logger.d("DataSourceProvider.provideWebSocketDataSourceInstance");
+    public static DataSource webSocketDataSourceInstance() {
+        Logger.d("DataSourceProvider.webSocketDataSourceInstance");
 
-        WebSocketDataSource dataSource = sDataSource;
+        DataSource dataSource = sDataSource;
         if (dataSource == null) {
             synchronized (DataSourceProvider.class) {
                 dataSource = sDataSource;
                 if (dataSource == null) {
                     OkHttpClient okHttpClient = provideOkHttpClientInstance();
 
-                    Logger.d("DataSourceProvider.provideWebSocketDataSourceInstance: " + "Create new instance");
+                    Logger.d("DataSourceProvider.webSocketDataSourceInstance: " + "Create new instance");
                     sDataSource = dataSource = new WebSocketDataSource(okHttpClient);
                 }
             }

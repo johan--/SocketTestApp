@@ -27,7 +27,7 @@ public class SwarmSessionRequest implements SwarmRequest {
 
     @Override
     public String toJsonString() {
-        return GsonProvider.provideGson().toJson(this);
+        return GsonProvider.gson().toJson(this);
     }
 
     private static class Params {

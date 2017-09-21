@@ -19,6 +19,10 @@ public class SwarmResponseFilterTransformer implements Observable.Transformer<Sw
 
     private String mSubId = UNSPECIFIED_SUB_ID;
 
+    public String getSubId() {
+        return mSubId;
+    }
+
     public SwarmResponseFilterTransformer(long requestId) {
         mRequestId = requestId;
     }
@@ -50,12 +54,15 @@ public class SwarmResponseFilterTransformer implements Observable.Transformer<Sw
                     throw new SwarmException(swarmResponse.getMessage(), swarmResponse.getCode());
                 }
             }
+        }).filter(new Func1<SwarmResponse, Boolean>() {
+            @Override
+            public Boolean call(SwarmResponse swarmResponse) {
+                return swarmResponse.getData().isJsonObject();
+            }
         }).map(new Func1<SwarmResponse, JsonObject>() {
             @Override
             public JsonObject call(SwarmResponse swarmResponse) {
                 JsonObject jsonObject = swarmResponse.getData().getAsJsonObject();
-
-                //noinspection ConstantConditions
                 if (jsonObject.has(mSubId)) {
                     return jsonObject.getAsJsonObject(mSubId);
                 } else {

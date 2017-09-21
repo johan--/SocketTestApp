@@ -5,7 +5,7 @@ import android.app.Application;
 import android.support.annotation.Nullable;
 
 import com.surinov.alexander.sockettestapp.data.provider.DataSourceProvider;
-import com.surinov.alexander.sockettestapp.data.source.ConnectionControl;
+import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import java.util.concurrent.TimeUnit;
@@ -19,7 +19,7 @@ public class App extends Application {
     @Nullable
     private Subscription mTimerSubscription;
 
-    private final ConnectionControl mWebSocketConnectionControl = DataSourceProvider.provideWebSocketDataSourceInstance();
+    private final DataSource mDataSource = DataSourceProvider.webSocketDataSourceInstance();
 
     private final AppLifecycle mAppLifecycle = new AppLifecycle() {
         @Override
@@ -39,9 +39,9 @@ public class App extends Application {
                     .subscribe(new Action0() {
                         @Override
                         public void call() {
-                            if (mWebSocketConnectionControl.isConnectionOpened()) {
+                            if (mDataSource.isConnectionOpened()) {
                                 Logger.d("App.onActivityStopped: close connection");
-                                mWebSocketConnectionControl.closeConnection();
+                                mDataSource.closeConnection();
                             }
                         }
                     });

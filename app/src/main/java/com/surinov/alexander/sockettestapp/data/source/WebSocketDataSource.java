@@ -15,7 +15,7 @@ import okhttp3.WebSocketListener;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
-public class WebSocketDataSource implements DataSource, ConnectionControl {
+public class WebSocketDataSource implements DataSource {
 
     private enum ConnectionState {
         OPENED, CLOSED
@@ -57,15 +57,16 @@ public class WebSocketDataSource implements DataSource, ConnectionControl {
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             Logger.d("WebSocketDataSource.WebSocketListener.onClosed");
-            pushDataIfHasObservers(WebSocketResponse.competed(), mWebSocketResponseSubject);
             mConnectionState = ConnectionState.CLOSED;
+            pushDataIfHasObservers(WebSocketResponse.competed(), mWebSocketResponseSubject);
+
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Logger.d("WebSocketDataSource.WebSocketListener.onFailure: " + t);
-            pushDataIfHasObservers(WebSocketResponse.error(t), mWebSocketResponseSubject);
             mConnectionState = ConnectionState.CLOSED;
+            pushDataIfHasObservers(WebSocketResponse.error(t), mWebSocketResponseSubject);
         }
     };
 

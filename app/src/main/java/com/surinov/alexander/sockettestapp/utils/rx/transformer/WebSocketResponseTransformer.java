@@ -20,27 +20,24 @@ public class WebSocketResponseTransformer implements Observable.Transformer<WebS
 
     @Override
     public Observable<SwarmResponse> call(final Observable<WebSocketResponse> source) {
-        return source
-                .doOnNext(new Action1<WebSocketResponse>() {
-                    @Override
-                    public void call(WebSocketResponse webSocketResponse) {
-                        if (webSocketResponse.getState() == WebSocketResponse.State.ERROR) {
-                            throw new RuntimeException(webSocketResponse.getThrowable());
-                        }
-                    }
-                })
-                .takeUntil(new Func1<WebSocketResponse, Boolean>() {
-                    @Override
-                    public Boolean call(WebSocketResponse webSocketResponse) {
-                        return webSocketResponse.getState() == WebSocketResponse.State.COMPLETED;
-                    }
-                })
-                .map(new Func1<WebSocketResponse, SwarmResponse>() {
-                    @Override
-                    public SwarmResponse call(WebSocketResponse swarmResponse) {
-                        Gson gson = GsonProvider.provideGson();
-                        return gson.fromJson(swarmResponse.getResponse(), SwarmResponse.class);
-                    }
-                });
+        return source.doOnNext(new Action1<WebSocketResponse>() {
+            @Override
+            public void call(WebSocketResponse webSocketResponse) {
+                if (webSocketResponse.getState() == WebSocketResponse.State.ERROR) {
+                    throw new RuntimeException(webSocketResponse.getThrowable());
+                }
+            }
+        }).takeWhile(new Func1<WebSocketResponse, Boolean>() {
+            @Override
+            public Boolean call(WebSocketResponse webSocketResponse) {
+                return webSocketResponse.getState() == WebSocketResponse.State.NEXT;
+            }
+        }).map(new Func1<WebSocketResponse, SwarmResponse>() {
+            @Override
+            public SwarmResponse call(WebSocketResponse swarmResponse) {
+                Gson gson = GsonProvider.gson();
+                return gson.fromJson(swarmResponse.getResponse(), SwarmResponse.class);
+            }
+        });
     }
 }

@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 public class GsonProvider {
     private static volatile Gson sGson;
 
-    public static Gson provideGson() {
+    public static Gson gson() {
         Gson gson = sGson;
         if (gson == null) {
             synchronized (GsonProvider.class) {
