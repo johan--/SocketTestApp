@@ -12,7 +12,7 @@ public interface DataSource {
 
     boolean isConnectionOpened();
 
-    void sendRequest(String request);
+    void sendRequest(String jsonStringRequest);
 
     Observable<WebSocketResponse> getWebSocketResponseObservable();
 }

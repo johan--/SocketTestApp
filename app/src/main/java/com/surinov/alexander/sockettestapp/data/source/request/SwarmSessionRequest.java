@@ -2,8 +2,9 @@ package com.surinov.alexander.sockettestapp.data.source.request;
 
 import com.google.gson.annotations.SerializedName;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
+import com.surinov.alexander.sockettestapp.data.source.JsonSerializableRequest;
 
-public class SwarmSessionRequest implements SwarmRequest {
+public class SwarmSessionRequest implements JsonSerializableRequest {
 
     private static final String SWARM_SESSION_REQUEST_COMMAND = "request_session";
 
@@ -28,11 +29,6 @@ public class SwarmSessionRequest implements SwarmRequest {
     @Override
     public String toJsonString() {
         return GsonProvider.gson().toJson(this);
-    }
-
-    @Override
-    public long gerRequestId() {
-        return 0;
     }
 
     private static class Params {

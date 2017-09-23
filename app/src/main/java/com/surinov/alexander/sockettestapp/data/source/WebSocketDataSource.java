@@ -23,8 +23,6 @@ public class WebSocketDataSource implements DataSource {
 
     private static final String WEB_SOCKET_ENDPOINT = "wss://swarm.888.ru/";
 
-    private static final String REQUEST_SESSION_COMMAND = "{\"command\":\"request_session\",\"params\":{\"site_id\":325,\"language\":\"rus\",\"source\":16}}";
-
     @NonNull
     private final OkHttpClient mOkHttpClient;
 
@@ -95,10 +93,10 @@ public class WebSocketDataSource implements DataSource {
     }
 
     @Override
-    public synchronized void sendRequest(String request) {
+    public synchronized void sendRequest(String jsonStringRequest) {
         openConnectionIfNeeded();
         if (mWebSocket != null) {
-            mWebSocket.send(request);
+            mWebSocket.send(jsonStringRequest);
         }
     }
 
@@ -107,10 +105,10 @@ public class WebSocketDataSource implements DataSource {
         return mWebSocketResponseSubject;
     }
 
-    private void pushDataIfHasObservers(@NonNull WebSocketResponse webSocketData,
+    private void pushDataIfHasObservers(@NonNull WebSocketResponse webSocketResponse,
                                         @NonNull PublishSubject<WebSocketResponse> subject) {
         if (subject.hasObservers()) {
-            subject.onNext(webSocketData);
+            subject.onNext(webSocketResponse);
         }
     }
 

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
+import com.surinov.alexander.sockettestapp.data.source.JsonSerializableRequest;
 import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
 import com.surinov.alexander.sockettestapp.data.source.request.SwarmUnsubscribeRequest;
 import com.surinov.alexander.sockettestapp.utils.Logger;
@@ -69,8 +70,8 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                 .toSingle();
     }
 
-    private void sendRequest(SwarmRequest swarmRequest) {
-        String jsonSwarmRequest = swarmRequest.toJsonString();
-        mDataSource.sendRequest(jsonSwarmRequest);
+    private void sendRequest(JsonSerializableRequest request) {
+        String jsonStringRequest = request.toJsonString();
+        mDataSource.sendRequest(jsonStringRequest);
     }
 }

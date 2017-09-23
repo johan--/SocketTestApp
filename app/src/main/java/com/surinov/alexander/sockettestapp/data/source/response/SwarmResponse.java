@@ -18,7 +18,7 @@ public class SwarmResponse {
     private long mRequestId = UNSPECIFIED_REQUEST_ID;
 
     @SerializedName("data")
-    private JsonElement mData;
+    private JsonElement mJsonData;
 
     @Nullable
     @SerializedName("msg")
@@ -32,8 +32,8 @@ public class SwarmResponse {
         return mRequestId;
     }
 
-    public JsonElement getData() {
-        return mData;
+    public JsonElement getJsonData() {
+        return mJsonData;
     }
 
     public String getMessage() {
@@ -45,7 +45,7 @@ public class SwarmResponse {
         return "SwarmResponse{" +
                 "mCode=" + mCode +
                 ", mRequestId=" + mRequestId +
-                ", mData=" + mData +
+                ", mJsonData=" + mJsonData +
                 ", mMessage='" + mMessage + '\'' +
                 '}';
     }

@@ -32,7 +32,7 @@ public class SwarmResponseFilterTransformer implements Observable.Transformer<Sw
         return source.filter(new Func1<SwarmResponse, Boolean>() {
             @Override
             public Boolean call(SwarmResponse swarmResponse) {
-                JsonElement jsonData = swarmResponse.getData();
+                JsonElement jsonData = swarmResponse.getJsonData();
 
                 if (swarmResponse.getRequestId() == mRequestId) {
                     if (jsonData.isJsonObject()) {
@@ -57,16 +57,16 @@ public class SwarmResponseFilterTransformer implements Observable.Transformer<Sw
         }).filter(new Func1<SwarmResponse, Boolean>() {
             @Override
             public Boolean call(SwarmResponse swarmResponse) {
-                return swarmResponse.getData().isJsonObject();
+                return swarmResponse.getJsonData().isJsonObject();
             }
         }).map(new Func1<SwarmResponse, JsonObject>() {
             @Override
             public JsonObject call(SwarmResponse swarmResponse) {
-                JsonObject jsonObject = swarmResponse.getData().getAsJsonObject();
-                if (jsonObject.has(mSubId)) {
-                    return jsonObject.getAsJsonObject(mSubId);
+                JsonObject jsonData = swarmResponse.getJsonData().getAsJsonObject();
+                if (jsonData.has(mSubId)) {
+                    return jsonData.getAsJsonObject(mSubId);
                 } else {
-                    return jsonObject.getAsJsonObject("data");
+                    return jsonData.getAsJsonObject("data");
                 }
             }
         });

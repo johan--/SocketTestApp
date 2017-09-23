@@ -1,7 +1,7 @@
 package com.surinov.alexander.sockettestapp.data.source.request;
 
-public interface SwarmRequest {
-    String toJsonString();
+import com.surinov.alexander.sockettestapp.data.source.JsonSerializableRequest;
 
+public interface SwarmRequest extends JsonSerializableRequest {
     long gerRequestId();
 }
