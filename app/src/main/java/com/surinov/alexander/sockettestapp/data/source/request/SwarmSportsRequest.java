@@ -1,9 +1,7 @@
-package com.surinov.alexander.sockettestapp.data.source.request.sport;
+package com.surinov.alexander.sockettestapp.data.source.request;
 
-import com.surinov.alexander.sockettestapp.data.source.request.RequestIdGenerator;
-import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
 import com.surinov.alexander.sockettestapp.data.source.request.generator.SwarmRequestsGenerator;
-import com.surinov.alexander.sockettestapp.data.source.request.generator.SwarmRequestsGeneratorProvider;
+import com.surinov.alexander.sockettestapp.data.provider.SwarmRequestsGeneratorProvider;
 
 public class SwarmSportsRequest implements SwarmRequest {
 
@@ -11,7 +9,7 @@ public class SwarmSportsRequest implements SwarmRequest {
     private final int mType;
     private final boolean mSubscribe;
 
-    private SwarmRequestsGenerator mSwarmRequestsGenerator = SwarmRequestsGeneratorProvider.requestsGenerator();
+    private SwarmRequestsGenerator mSwarmRequestsGenerator = SwarmRequestsGeneratorProvider.INSTANCE;
 
     public SwarmSportsRequest(int type, boolean subscribe) {
         mRequestId = RequestIdGenerator.nextRequestId();

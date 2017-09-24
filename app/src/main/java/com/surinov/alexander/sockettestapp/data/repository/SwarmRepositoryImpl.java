@@ -3,6 +3,9 @@ package com.surinov.alexander.sockettestapp.data.repository;
 import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
+import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
+import com.surinov.alexander.sockettestapp.data.source.request.SwarmSportsRequest;
+import com.surinov.alexander.sockettestapp.data.source.response.sport.SwarmSportListResponse;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.data.source.request.JsonSerializable;
 import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
@@ -12,8 +15,8 @@ import com.surinov.alexander.sockettestapp.utils.rx.transformer.SwarmResponseFil
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketResponseTransformer;
 
 import rx.Observable;
-import rx.Single;
 import rx.functions.Action0;
+import rx.functions.Func1;
 
 public class SwarmRepositoryImpl implements SwarmRepository {
 
@@ -25,7 +28,17 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     @Override
-    public Observable<JsonObject> requestSwarmDataWithUpdates(final SwarmRequest swarmRequest) {
+    public Observable<SwarmSportListResponse> fetchSportEvents(@NonNull SwarmSportsRequest request) {
+        return fetchSwarmData(request)
+                .map(new Func1<JsonObject, SwarmSportListResponse>() {
+                    @Override
+                    public SwarmSportListResponse call(JsonObject jsonObject) {
+                        return GsonProvider.INSTANCE.fromJson(jsonObject, SwarmSportListResponse.class);
+                    }
+                });
+    }
+
+    private Observable<JsonObject> fetchSwarmData(final SwarmRequest swarmRequest) {
         final SwarmResponseFilterTransformer swarmResponseFilterTransformer =
                 new SwarmResponseFilterTransformer(swarmRequest.gerRequestId());
 
@@ -35,39 +48,23 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        Logger.d("SportLiveEventsRepositoryImpl.requestSwarmDataWithUpdates.doOnSubscribe");
+                        Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnSubscribe");
                         sendRequest(swarmRequest);
                     }
                 })
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
-                        Logger.d("SportLiveEventsRepositoryImpl.requestSwarmDataWithUpdates.doOnUnsubscribe");
+                        Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe");
                         if (mDataSource.isConnectionOpened()) {
                             String subId = swarmResponseFilterTransformer.getSubId();
                             if (!subId.equals(SwarmResponseFilterTransformer.UNSPECIFIED_SUB_ID)) {
                                 sendRequest(new SwarmUnsubscribeRequest(subId));
-                                Logger.d("SportLiveEventsRepositoryImpl.requestSwarmDataWithUpdates.doOnUnsubscribe: send unsubscribe = " + subId);
+                                Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe: send unsubscribe = " + subId);
                             }
                         }
                     }
                 });
-    }
-
-    @Override
-    public Single<JsonObject> requestSwarmData(final SwarmRequest swarmRequest) {
-        return mDataSource.getWebSocketResponseObservable()
-                .compose(WebSocketResponseTransformer.INSTANCE)
-                .compose(new SwarmResponseFilterTransformer(swarmRequest.gerRequestId()))
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        Logger.d("SportLiveEventsRepositoryImpl.requestSwarmData.doOnSubscribe");
-                        sendRequest(swarmRequest);
-                    }
-                })
-                .take(1)
-                .toSingle();
     }
 
     private void sendRequest(JsonSerializable request) {

@@ -4,25 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class GsonProvider {
-    private static volatile Gson sGson;
+    public static final Gson INSTANCE;
 
-    public static Gson gson() {
-        Gson gson = sGson;
-        if (gson == null) {
-            synchronized (GsonProvider.class) {
-                gson = sGson;
-                if (gson == null) {
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.serializeNulls();
-
-                    // configure GsonBuilder
-                    // ...
-
-                    gson = sGson = gsonBuilder.create();
-                }
-            }
-        }
-
-        return gson;
+    static {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        INSTANCE = gsonBuilder.create();
     }
 }

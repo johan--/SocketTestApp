@@ -33,8 +33,8 @@ public class DataSourceProvider {
         return okHttpClient;
     }
 
-    public static DataSource webSocketDataSourceInstance() {
-        Logger.d("DataSourceProvider.webSocketDataSourceInstance");
+    public static DataSource dataSource() {
+        Logger.d("DataSourceProvider.dataSource");
 
         DataSource dataSource = sDataSource;
         if (dataSource == null) {
@@ -43,7 +43,7 @@ public class DataSourceProvider {
                 if (dataSource == null) {
                     OkHttpClient okHttpClient = provideOkHttpClientInstance();
 
-                    Logger.d("DataSourceProvider.webSocketDataSourceInstance: " + "Create new instance");
+                    Logger.d("DataSourceProvider.dataSource: " + "Create new instance");
                     sDataSource = dataSource = new WebSocketDataSource(okHttpClient);
                 }
             }

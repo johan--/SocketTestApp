@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.surinov.alexander.sockettestapp.App;
 import com.surinov.alexander.sockettestapp.R;
 
-class AppResourcesSwarmRequestsGenerator implements SwarmRequestsGenerator {
+public class AppResourcesSwarmRequestsGenerator implements SwarmRequestsGenerator {
 
     @Override
     public String generateSessionRequest(int siteId, @NonNull String language, int source) {

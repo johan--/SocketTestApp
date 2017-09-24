@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.R;
 import com.surinov.alexander.sockettestapp.data.provider.DataSourceProvider;
+import com.surinov.alexander.sockettestapp.data.provider.SwarmRepositoryProvider;
 import com.surinov.alexander.sockettestapp.data.repository.SwarmRepository;
 import com.surinov.alexander.sockettestapp.data.repository.SwarmRepositoryImpl;
-import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
-import com.surinov.alexander.sockettestapp.data.source.request.sport.SwarmSportsRequest;
+import com.surinov.alexander.sockettestapp.data.source.request.SwarmSportsRequest;
+import com.surinov.alexander.sockettestapp.data.source.response.sport.SwarmSportListResponse;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import rx.Subscriber;
@@ -23,8 +23,7 @@ public class SimpleFragment extends Fragment {
 
     public static final String BUNDLE_REQUEST_DATA_WITH_UPDATES = "com.surinov.alexander.sockettestapp.ui.request_data_with_updates";
 
-    private SwarmRepository mSwarmRepository =
-            new SwarmRepositoryImpl(DataSourceProvider.webSocketDataSourceInstance());
+    private SwarmRepository mSwarmRepository = SwarmRepositoryProvider.INSTANCE;
 
     @Nullable
     private Subscription mSubscription;
@@ -70,40 +69,22 @@ public class SimpleFragment extends Fragment {
     private void performRequest() {
         unsubscribe();
 
-//        mSubscription = mSwarmRepository.requestSwarmDataWithUpdates(1)
-//                .subscribe(new Subscriber<JsonObject>() {
-//                    @Override
-//                    public void onCompleted() {
-//                        Logger.d("SimpleFragment.performRequest.requestSwarmDataWithUpdates.onCompleted");
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Logger.d("SimpleFragment.performRequest.requestSwarmDataWithUpdates.onError: " + e);
-//                    }
-//
-//                    @Override
-//                    public void onNext(JsonObject response) {
-//                        Logger.d("SimpleFragment.performRequest.requestSwarmDataWithUpdates.onNext: " + response);
-//                    }
-//                });
-
-        SwarmRequest swarmRequestRequest = new SwarmSportsRequest(1, true);
-        mSubscription = mSwarmRepository.requestSwarmDataWithUpdates(swarmRequestRequest)
-                .subscribe(new Subscriber<JsonObject>() {
+        SwarmSportsRequest swarmRequestRequest = new SwarmSportsRequest(1, true);
+        mSubscription = mSwarmRepository.fetchSportEvents(swarmRequestRequest)
+                .subscribe(new Subscriber<SwarmSportListResponse>() {
                     @Override
                     public void onCompleted() {
-                        Logger.d("SimpleFragment.performRequest.requestSwarmDataWithUpdates.onCompleted");
+                        Logger.d("SimpleFragment.performRequest.fetchSwarmData.onCompleted");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Logger.d("SimpleFragment.performRequest.requestSwarmDataWithUpdates.onError: " + e);
+                        Logger.d("SimpleFragment.performRequest.fetchSwarmData.onError: " + e);
                     }
 
                     @Override
-                    public void onNext(JsonObject response) {
-                        Logger.d("SimpleFragment.performRequest.requestSwarmDataWithUpdates.onNext: " + response);
+                    public void onNext(SwarmSportListResponse response) {
+                        Logger.d("SimpleFragment.performRequest.fetchSwarmData.onNext: " + response);
                     }
                 });
 

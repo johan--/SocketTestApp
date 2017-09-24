@@ -20,7 +20,7 @@ public class App extends Application {
     @Nullable
     private Subscription mTimerSubscription;
 
-    private final DataSource mDataSource = DataSourceProvider.webSocketDataSourceInstance();
+    private final DataSource mDataSource = DataSourceProvider.dataSource();
 
     private static Context sApplicationContext;
 

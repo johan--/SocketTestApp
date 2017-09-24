@@ -35,8 +35,7 @@ public class WebSocketResponseTransformer implements Observable.Transformer<WebS
         }).map(new Func1<WebSocketResponse, SwarmResponse>() {
             @Override
             public SwarmResponse call(WebSocketResponse swarmResponse) {
-                Gson gson = GsonProvider.gson();
-                return gson.fromJson(swarmResponse.getResponse(), SwarmResponse.class);
+                return GsonProvider.INSTANCE.fromJson(swarmResponse.getResponse(), SwarmResponse.class);
             }
         });
     }
