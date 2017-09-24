@@ -1,4 +1,4 @@
-package com.surinov.alexander.sockettestapp.data.source;
+package com.surinov.alexander.sockettestapp.data.source.exception;
 
 
 public class SwarmException extends RuntimeException {

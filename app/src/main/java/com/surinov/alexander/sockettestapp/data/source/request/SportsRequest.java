@@ -3,7 +3,7 @@ package com.surinov.alexander.sockettestapp.data.source.request;
 import com.surinov.alexander.sockettestapp.data.source.request.generator.SwarmRequestsGenerator;
 import com.surinov.alexander.sockettestapp.data.provider.SwarmRequestsGeneratorProvider;
 
-public class SwarmSportsRequest implements SwarmRequest {
+public class SportsRequest implements SwarmRequest {
 
     private final long mRequestId;
     private final int mType;
@@ -11,7 +11,7 @@ public class SwarmSportsRequest implements SwarmRequest {
 
     private SwarmRequestsGenerator mSwarmRequestsGenerator = SwarmRequestsGeneratorProvider.INSTANCE;
 
-    public SwarmSportsRequest(int type, boolean subscribe) {
+    public SportsRequest(int type, boolean subscribe) {
         mRequestId = RequestIdGenerator.nextRequestId();
         mType = type;
         mSubscribe = subscribe;

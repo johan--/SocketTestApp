@@ -8,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.surinov.alexander.sockettestapp.R;
-import com.surinov.alexander.sockettestapp.data.provider.DataSourceProvider;
 import com.surinov.alexander.sockettestapp.data.provider.SwarmRepositoryProvider;
 import com.surinov.alexander.sockettestapp.data.repository.SwarmRepository;
-import com.surinov.alexander.sockettestapp.data.repository.SwarmRepositoryImpl;
-import com.surinov.alexander.sockettestapp.data.source.request.SwarmSportsRequest;
-import com.surinov.alexander.sockettestapp.data.source.response.sport.SwarmSportListResponse;
+import com.surinov.alexander.sockettestapp.data.source.request.SportsRequest;
+import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import rx.Subscriber;
@@ -69,9 +67,9 @@ public class SimpleFragment extends Fragment {
     private void performRequest() {
         unsubscribe();
 
-        SwarmSportsRequest swarmRequestRequest = new SwarmSportsRequest(1, true);
+        SportsRequest swarmRequestRequest = new SportsRequest(1, true);
         mSubscription = mSwarmRepository.fetchSportEvents(swarmRequestRequest)
-                .subscribe(new Subscriber<SwarmSportListResponse>() {
+                .subscribe(new Subscriber<SportsResponse>() {
                     @Override
                     public void onCompleted() {
                         Logger.d("SimpleFragment.performRequest.fetchSwarmData.onCompleted");
@@ -83,7 +81,7 @@ public class SimpleFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(SwarmSportListResponse response) {
+                    public void onNext(SportsResponse response) {
                         Logger.d("SimpleFragment.performRequest.fetchSwarmData.onNext: " + response);
                     }
                 });

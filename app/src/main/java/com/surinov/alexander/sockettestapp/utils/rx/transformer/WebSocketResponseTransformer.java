@@ -1,8 +1,8 @@
 package com.surinov.alexander.sockettestapp.utils.rx.transformer;
 
 
-import com.google.gson.Gson;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
+import com.surinov.alexander.sockettestapp.data.source.exception.SocketException;
 import com.surinov.alexander.sockettestapp.data.source.response.SwarmResponse;
 import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 
@@ -24,7 +24,7 @@ public class WebSocketResponseTransformer implements Observable.Transformer<WebS
             @Override
             public void call(WebSocketResponse webSocketResponse) {
                 if (webSocketResponse.getState() == WebSocketResponse.State.ERROR) {
-                    throw new RuntimeException(webSocketResponse.getThrowable());
+                    throw new SocketException(webSocketResponse.getThrowable());
                 }
             }
         }).takeWhile(new Func1<WebSocketResponse, Boolean>() {

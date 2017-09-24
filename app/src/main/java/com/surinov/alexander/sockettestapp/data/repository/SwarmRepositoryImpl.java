@@ -4,12 +4,12 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
-import com.surinov.alexander.sockettestapp.data.source.request.SwarmSportsRequest;
-import com.surinov.alexander.sockettestapp.data.source.response.sport.SwarmSportListResponse;
+import com.surinov.alexander.sockettestapp.data.source.request.SportsRequest;
+import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.data.source.request.JsonSerializable;
 import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
-import com.surinov.alexander.sockettestapp.data.source.request.SwarmUnsubscribeRequest;
+import com.surinov.alexander.sockettestapp.data.source.request.UnsubscribeRequest;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.SwarmResponseFilterTransformer;
 import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketResponseTransformer;
@@ -28,12 +28,12 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     @Override
-    public Observable<SwarmSportListResponse> fetchSportEvents(@NonNull SwarmSportsRequest request) {
+    public Observable<SportsResponse> fetchSportEvents(@NonNull SportsRequest request) {
         return fetchSwarmData(request)
-                .map(new Func1<JsonObject, SwarmSportListResponse>() {
+                .map(new Func1<JsonObject, SportsResponse>() {
                     @Override
-                    public SwarmSportListResponse call(JsonObject jsonObject) {
-                        return GsonProvider.INSTANCE.fromJson(jsonObject, SwarmSportListResponse.class);
+                    public SportsResponse call(JsonObject jsonObject) {
+                        return GsonProvider.INSTANCE.fromJson(jsonObject, SportsResponse.class);
                     }
                 });
     }
@@ -59,7 +59,7 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                         if (mDataSource.isConnectionOpened()) {
                             String subId = swarmResponseFilterTransformer.getSubId();
                             if (!subId.equals(SwarmResponseFilterTransformer.UNSPECIFIED_SUB_ID)) {
-                                sendRequest(new SwarmUnsubscribeRequest(subId));
+                                sendRequest(new UnsubscribeRequest(subId));
                                 Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe: send unsubscribe = " + subId);
                             }
                         }

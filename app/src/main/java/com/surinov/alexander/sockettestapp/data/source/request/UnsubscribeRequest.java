@@ -3,12 +3,12 @@ package com.surinov.alexander.sockettestapp.data.source.request;
 import com.surinov.alexander.sockettestapp.data.source.request.generator.SwarmRequestsGenerator;
 import com.surinov.alexander.sockettestapp.data.provider.SwarmRequestsGeneratorProvider;
 
-public class SwarmUnsubscribeRequest implements JsonSerializable {
+public class UnsubscribeRequest implements JsonSerializable {
     private final String mSubId;
 
     private SwarmRequestsGenerator mSwarmRequestsGenerator = SwarmRequestsGeneratorProvider.INSTANCE;
 
-    public SwarmUnsubscribeRequest(String subId) {
+    public UnsubscribeRequest(String subId) {
         mSubId = subId;
     }
 

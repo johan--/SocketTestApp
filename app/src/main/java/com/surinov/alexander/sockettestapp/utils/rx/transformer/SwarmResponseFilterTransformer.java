@@ -4,7 +4,7 @@ package com.surinov.alexander.sockettestapp.utils.rx.transformer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.surinov.alexander.sockettestapp.data.source.SwarmException;
+import com.surinov.alexander.sockettestapp.data.source.exception.SwarmException;
 import com.surinov.alexander.sockettestapp.data.source.response.SwarmResponse;
 
 import rx.Observable;
