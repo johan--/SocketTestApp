@@ -2,6 +2,7 @@ package com.surinov.alexander.sockettestapp;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.surinov.alexander.sockettestapp.data.provider.DataSourceProvider;
@@ -20,6 +21,8 @@ public class App extends Application {
     private Subscription mTimerSubscription;
 
     private final DataSource mDataSource = DataSourceProvider.webSocketDataSourceInstance();
+
+    private static Context sApplicationContext;
 
     private final AppLifecycle mAppLifecycle = new AppLifecycle() {
         @Override
@@ -54,6 +57,12 @@ public class App extends Application {
         super.onCreate();
         Logger.d("App.onCreate");
 
+        sApplicationContext = getApplicationContext();
+
         registerActivityLifecycleCallbacks(mAppLifecycle);
+    }
+
+    public static Context getAppContext() {
+        return sApplicationContext;
     }
 }

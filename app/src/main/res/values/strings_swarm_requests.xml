@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="swarm_session_request" translatable="false">
+        {
+            \"command\": \"request_session\",
+            \"params\": {
+                \"site_id\": %1$d,
+                \"language\": \"%2$s\",
+                \"source\": %3$d
+            }
+        }
+    </string>
+
+    <string name="swarm_unsubscribe_request" formatted="false" translatable="false">
+        {
+            \"command\": \"unsubscribe\",
+            \"params\": {
+                \"subid\": \"%1$s\"
+            }
+        }
+    </string>
+
+    <string name="swarm_sports_request" formatted="false" translatable="false">
+        {
+            \"command\": \"get\",
+            \"rid\": %1$d,
+            \"params\": {
+                \"source\": \"betting\",
+                \"where\": {
+                    \"game\": {
+                        \"type\": %2$d
+                    }
+                },
+                \"what\": {
+                    \"game\": \"@count\",
+                    \"sport\": []
+                },
+                \"subscribe\": %3$b
+            }
+        }
+    </string>
+</resources>

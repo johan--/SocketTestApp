@@ -125,6 +125,7 @@ public class WebSocketDataSource implements DataSource {
                 .build();
 
         WebSocket webSocket = mWebSocket = mOkHttpClient.newWebSocket(openConnectionRequest, mWebSocketListener); // open connection
-        webSocket.send(SwarmSessionRequest.INSTANCE.toJsonString()); // request session
+        String request = new SwarmSessionRequest().toJsonString();
+        webSocket.send(request); // request session
     }
 }

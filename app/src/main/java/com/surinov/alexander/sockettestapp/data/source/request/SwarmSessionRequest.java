@@ -1,12 +1,9 @@
 package com.surinov.alexander.sockettestapp.data.source.request;
 
-import com.google.gson.annotations.SerializedName;
-import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
-import com.surinov.alexander.sockettestapp.data.source.JsonSerializableRequest;
+import com.surinov.alexander.sockettestapp.data.source.request.generator.SwarmRequestsGenerator;
+import com.surinov.alexander.sockettestapp.data.source.request.generator.SwarmRequestsGeneratorProvider;
 
-public class SwarmSessionRequest implements JsonSerializableRequest {
-
-    private static final String SWARM_SESSION_REQUEST_COMMAND = "request_session";
+public class SwarmSessionRequest implements JsonSerializable {
 
     private static final String SWARM_SESSION_LANGUAGE = "rus";
 
@@ -14,32 +11,10 @@ public class SwarmSessionRequest implements JsonSerializableRequest {
 
     private static final int SWARM_SESSION_SITE_ID = 325;
 
-    public static final SwarmSessionRequest INSTANCE = new SwarmSessionRequest();
-
-    private SwarmSessionRequest() {
-        // SwarmSessionRequest is a single instance class
-    }
-
-    @SerializedName("command")
-    private final String mCommand = SWARM_SESSION_REQUEST_COMMAND;
-
-    @SerializedName("params")
-    private final Params mParams = new Params();
+    private SwarmRequestsGenerator mSwarmRequestsGenerator = SwarmRequestsGeneratorProvider.requestsGenerator();
 
     @Override
     public String toJsonString() {
-        return GsonProvider.gson().toJson(this);
-    }
-
-    private static class Params {
-
-        @SerializedName("language")
-        private final String mLanguage = SWARM_SESSION_LANGUAGE;
-
-        @SerializedName("source")
-        private final int mSource = SWARM_SESSION_PLATFORM_CODE;
-
-        @SerializedName("site_id")
-        private final int mSiteId = SWARM_SESSION_SITE_ID;
+        return mSwarmRequestsGenerator.generateSessionRequest(SWARM_SESSION_SITE_ID, SWARM_SESSION_LANGUAGE, SWARM_SESSION_PLATFORM_CODE);
     }
 }
