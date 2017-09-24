@@ -1,4 +1,4 @@
-package com.surinov.alexander.sockettestapp.utils.rx.transformer;
+package com.surinov.alexander.sockettestapp.data.rx.transformer;
 
 
 import com.google.gson.JsonElement;

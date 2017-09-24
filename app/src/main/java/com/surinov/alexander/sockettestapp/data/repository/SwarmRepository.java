@@ -9,5 +9,5 @@ import rx.Observable;
 
 public interface SwarmRepository {
 
-    Observable<SportsResponse> fetchSportEvents(@NonNull SportsRequest request);
+    Observable<SportsResponse> fetchSports(@NonNull SportsRequest request);
 }

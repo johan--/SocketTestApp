@@ -11,8 +11,8 @@ import com.surinov.alexander.sockettestapp.data.source.request.JsonSerializable;
 import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
 import com.surinov.alexander.sockettestapp.data.source.request.UnsubscribeRequest;
 import com.surinov.alexander.sockettestapp.utils.Logger;
-import com.surinov.alexander.sockettestapp.utils.rx.transformer.SwarmResponseFilterTransformer;
-import com.surinov.alexander.sockettestapp.utils.rx.transformer.WebSocketResponseTransformer;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmResponseFilterTransformer;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.WebSocketResponseTransformer;
 
 import rx.Observable;
 import rx.functions.Action0;
@@ -28,7 +28,7 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     @Override
-    public Observable<SportsResponse> fetchSportEvents(@NonNull SportsRequest request) {
+    public Observable<SportsResponse> fetchSports(@NonNull SportsRequest request) {
         return fetchSwarmData(request)
                 .map(new Func1<JsonObject, SportsResponse>() {
                     @Override
