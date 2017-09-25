@@ -12,6 +12,10 @@ public class SportsResponse {
     @SerializedName("sport")
     private Map<String, SportItem> mSportMap;
 
+    public Map<String, SportItem> getSportMap() {
+        return mSportMap;
+    }
+
     public List<SportItem> getSportItems() {
         return mSportMap.isEmpty() ? Collections.<SportItem>emptyList() : new ArrayList<>(mSportMap.values());
     }
