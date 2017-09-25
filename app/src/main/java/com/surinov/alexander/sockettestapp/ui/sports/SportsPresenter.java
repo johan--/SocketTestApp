@@ -53,7 +53,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
 
         SportsRequest sportsRequest = new SportsRequest(/*live sport events*/ 1, /*subscribe for updates*/ true);
 
-        mSubscription = mSwarmRepository.fetchSports(sportsRequest)
+        mSubscription = mSwarmRepository.fetchSwarmDataObservable(SportsResponse.class, sportsRequest)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SportsResponse>() {
                     @Override

@@ -4,17 +4,16 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
-import com.surinov.alexander.sockettestapp.data.source.request.SportsRequest;
-import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmResponseFilterTransformer;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.WebSocketResponseTransformer;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.data.source.request.JsonSerializable;
 import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
 import com.surinov.alexander.sockettestapp.data.source.request.UnsubscribeRequest;
 import com.surinov.alexander.sockettestapp.utils.Logger;
-import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmResponseFilterTransformer;
-import com.surinov.alexander.sockettestapp.data.rx.transformer.WebSocketResponseTransformer;
 
 import rx.Observable;
+import rx.Single;
 import rx.functions.Action0;
 import rx.functions.Func1;
 
@@ -28,14 +27,27 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     @Override
-    public Observable<SportsResponse> fetchSports(@NonNull SportsRequest request) {
+    public <T> Observable<T> fetchSwarmDataObservable(final Class<T> classOfT, @NonNull SwarmRequest request) {
         return fetchSwarmData(request)
-                .map(new Func1<JsonObject, SportsResponse>() {
+                .map(new Func1<JsonObject, T>() {
                     @Override
-                    public SportsResponse call(JsonObject jsonObject) {
-                        return GsonProvider.INSTANCE.fromJson(jsonObject, SportsResponse.class);
+                    public T call(JsonObject jsonObject) {
+                        return GsonProvider.INSTANCE.fromJson(jsonObject, classOfT);
                     }
                 });
+    }
+
+    @Override
+    public <T> Single<T> fetchSwarmDataSingle(final Class<T> classOfT, @NonNull SwarmRequest request) {
+        return fetchSwarmData(request)
+                .map(new Func1<JsonObject, T>() {
+                    @Override
+                    public T call(JsonObject jsonObject) {
+                        return GsonProvider.INSTANCE.fromJson(jsonObject, classOfT);
+                    }
+                })
+                .take(1)
+                .toSingle();
     }
 
     private Observable<JsonObject> fetchSwarmData(final SwarmRequest swarmRequest) {
