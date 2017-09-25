@@ -27,24 +27,34 @@ public class SportsResponse {
                 '}';
     }
 
-    public static class SportItem {
+    public static class SportItem implements Updatable<SportItem> {
+
+        private SportItem(SportItem oldItem, SportItem newItem) {
+            mId = newItem.getId() != null ? newItem.getId() : oldItem.getId();
+            mAlias = newItem.getAlias() != null ? newItem.getAlias() : oldItem.getAlias();
+            mType = newItem.getType() != null ? newItem.getType() : oldItem.getType();
+            mName = newItem.getName() != null ? newItem.getName() : oldItem.getName();
+            mOrder = newItem.getOrder() != null ? newItem.getOrder() : oldItem.getOrder();
+            mGame = newItem.getGame() != null ? newItem.getGame() : oldItem.getGame();
+        }
+
         @SerializedName("id")
-        private int mId;
+        private Integer mId;
 
         @SerializedName("alias")
         private String mAlias;
 
         @SerializedName("type")
-        private int mType;
+        private Integer mType;
 
         @SerializedName("name")
         private String mName;
 
         @SerializedName("order")
-        private int mOrder;
+        private Integer mOrder;
 
         @SerializedName("game")
-        private int mGame;
+        private Integer mGame;
 
         @Override
         public String toString() {
@@ -58,7 +68,12 @@ public class SportsResponse {
                     '}';
         }
 
-        public int getId() {
+        @Override
+        public SportItem update(SportItem newItem) {
+            return new SportItem(this, newItem);
+        }
+
+        public Integer getId() {
             return mId;
         }
 
@@ -66,7 +81,7 @@ public class SportsResponse {
             return mAlias;
         }
 
-        public int getType() {
+        public Integer getType() {
             return mType;
         }
 
@@ -74,11 +89,11 @@ public class SportsResponse {
             return mName;
         }
 
-        public int getOrder() {
+        public Integer getOrder() {
             return mOrder;
         }
 
-        public int getGame() {
+        public Integer getGame() {
             return mGame;
         }
     }
