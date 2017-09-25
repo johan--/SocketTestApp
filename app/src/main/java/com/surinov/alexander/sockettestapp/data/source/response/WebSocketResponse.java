@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 public class WebSocketResponse {
 
-    @SuppressWarnings("WeakerAccess")
     public enum State {
         COMPLETED, NEXT, ERROR
     }
