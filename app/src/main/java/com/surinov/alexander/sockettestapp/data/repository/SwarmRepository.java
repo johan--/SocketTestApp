@@ -9,9 +9,9 @@ import rx.Single;
 
 public interface SwarmRepository {
 
-    <T> Observable<T> fetchSwarmDataObservable(final Class<T> dataClass,
+    <T> Observable<T> fetchSwarmDataObservable(@NonNull Class<T> classOfT,
                                                @NonNull SwarmRequest request);
 
-    <T> Single<T> fetchSwarmDataSingle(final Class<T> dataClass,
+    <T> Single<T> fetchSwarmDataSingle(@NonNull Class<T> classOfT,
                                        @NonNull SwarmRequest request);
 }

@@ -27,7 +27,8 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     @Override
-    public <T> Observable<T> fetchSwarmDataObservable(final Class<T> classOfT, @NonNull SwarmRequest request) {
+    public <T> Observable<T> fetchSwarmDataObservable(@NonNull final Class<T> classOfT,
+                                                      @NonNull SwarmRequest request) {
         return fetchSwarmData(request)
                 .map(new Func1<JsonObject, T>() {
                     @Override
@@ -38,7 +39,8 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     @Override
-    public <T> Single<T> fetchSwarmDataSingle(final Class<T> classOfT, @NonNull SwarmRequest request) {
+    public <T> Single<T> fetchSwarmDataSingle(@NonNull final Class<T> classOfT,
+                                              @NonNull SwarmRequest request) {
         return fetchSwarmData(request)
                 .map(new Func1<JsonObject, T>() {
                     @Override
