@@ -2,6 +2,7 @@ package com.surinov.alexander.sockettestapp.data.rx.transformer;
 
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
+import android.support.v4.util.SimpleArrayMap;
 
 import com.surinov.alexander.sockettestapp.data.source.response.Updatable;
 
@@ -16,10 +17,10 @@ import rx.schedulers.Schedulers;
 
 public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.Transformer<Map<String, T>, SwarmDataTransformer.ChangesBundle<T>> {
 
-    private final ArrayMap<String, T> mOriginalData = new ArrayMap<>();
+    private final SimpleArrayMap<String, T> mCachedData = new SimpleArrayMap<>();
 
-    public ArrayMap<String, T> getOriginalData() {
-        return mOriginalData;
+    public SimpleArrayMap<String, T> getCachedData() {
+        return mCachedData;
     }
 
     @Override
@@ -29,39 +30,39 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
                 .map(new Func1<Map<String, T>, ChangesBundle<T>>() {
                     @Override
                     public ChangesBundle<T> call(Map<String, T> newData) {
-                        return prepareChangesBundle(mOriginalData, newData);
+                        return prepareChangesBundle(mCachedData, newData);
                     }
                 })
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        mOriginalData.clear();
+                        mCachedData.clear();
                     }
                 });
     }
 
-    private ChangesBundle<T> prepareChangesBundle(ArrayMap<String, T> originalData, Map<String, T> newData) {
+    private ChangesBundle<T> prepareChangesBundle(SimpleArrayMap<String, T> cachedData, Map<String, T> newData) {
         ChangesBundle<T> changes = new ChangesBundle<>();
 
         for (Map.Entry<String, T> entry : newData.entrySet()) {
             T item = entry.getValue();
-            int originalItemIndex = originalData.indexOfKey(entry.getKey());
+            int cachedItemPosition = cachedData.indexOfKey(entry.getKey());
 
-            if (originalItemIndex < 0) {
+            if (cachedItemPosition < 0) {
                 // new item was added
                 changes.addNewItem(item);
-                originalData.put(entry.getKey(), item);
+                cachedData.put(entry.getKey(), item);
             } else if (item == null) {
                 // item was deleted
-                changes.addDeletedItemPosition(originalItemIndex);
-                originalData.removeAt(originalItemIndex);
+                changes.addDeletedItemPosition(cachedItemPosition);
+                cachedData.removeAt(cachedItemPosition);
             } else {
-                // item was updated
-                T originalItem = originalData.valueAt(originalItemIndex);
+                // item already exists and was updated
+                T originalItem = cachedData.valueAt(cachedItemPosition);
                 T updatedItem = originalItem.update(item);
 
-                changes.addUpdatedItem(updatedItem, originalItemIndex);
-                originalData.setValueAt(originalItemIndex, updatedItem);
+                changes.addUpdatedItem(updatedItem, cachedItemPosition);
+                cachedData.setValueAt(cachedItemPosition, updatedItem);
             }
         }
 
