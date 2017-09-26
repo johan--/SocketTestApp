@@ -55,6 +55,6 @@ public class SportsFragment extends MvpAppCompatFragment implements SportsView {
 
     @Override
     public void onDataChanged(ChangesBundle<SportItem> changesBundle) {
-        Logger.d("SimpleFragment.onViewCreated.onDataChanged: " + changesBundle);
+        Logger.d("SimpleFragment.onViewCreated.onDataChanged2: " + changesBundle);
     }
 }

@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 
 import com.surinov.alexander.sockettestapp.data.source.response.Updatable;
-import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +29,7 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
                 .map(new Func1<Map<String, T>, ChangesBundle<T>>() {
                     @Override
                     public ChangesBundle<T> call(Map<String, T> newData) {
-                        Logger.d("SwarmDataTransformer.call before prepareChangesBundle: " + newData);
-                        ChangesBundle<T> changes = prepareChangesBundle(mOriginalData, newData);
-                        Logger.d("SwarmDataTransformer.call after prepareChangesBundle: " + newData);
-                        return changes;
+                        return prepareChangesBundle(mOriginalData, newData);
                     }
                 })
                 .doOnSubscribe(new Action0() {
