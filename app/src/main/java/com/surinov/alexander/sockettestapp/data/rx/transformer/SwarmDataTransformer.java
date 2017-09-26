@@ -4,121 +4,144 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 
 import com.surinov.alexander.sockettestapp.data.source.response.Updatable;
+import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import rx.Observable;
+import rx.functions.Action0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.Transformer<Map<String, T>, SwarmDataTransformer.Result<T>> {
+public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.Transformer<Map<String, T>, SwarmDataTransformer.ChangesBundle<T>> {
 
     private final ArrayMap<String, T> mOriginalData = new ArrayMap<>();
 
-    public List<T> getOriginalItems() {
-        return new ArrayList<>(mOriginalData.values());
+    public ArrayMap<String, T> getOriginalData() {
+        return mOriginalData;
     }
 
     @Override
-    public Observable<Result<T>> call(Observable<Map<String, T>> source) {
+    public Observable<ChangesBundle<T>> call(Observable<Map<String, T>> source) {
         return source
                 .observeOn(Schedulers.computation())
-                .map(new Func1<Map<String, T>, Result<T>>() {
-
-                    private boolean firstEmission = true;
-
+                .map(new Func1<Map<String, T>, ChangesBundle<T>>() {
                     @Override
-                    public Result<T> call(Map<String, T> newData) {
-                        if (firstEmission) {
-                            firstEmission = false;
-                            mOriginalData.putAll(newData);
-                            return Result.withOriginalData(new ArrayList<>(newData.values()));
-                        }
-
-                        List<UpdateItem<T>> updateData = prepareUpdateData(mOriginalData, newData);
-                        return Result.withUpdateData(updateData);
+                    public ChangesBundle<T> call(Map<String, T> newData) {
+                        Logger.d("SwarmDataTransformer.call before prepareChangesBundle: " + newData);
+                        ChangesBundle<T> changes = prepareChangesBundle(mOriginalData, newData);
+                        Logger.d("SwarmDataTransformer.call after prepareChangesBundle: " + newData);
+                        return changes;
+                    }
+                })
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mOriginalData.clear();
                     }
                 });
     }
 
-    private List<UpdateItem<T>> prepareUpdateData(ArrayMap<String, T> originalData, Map<String, T> newData) {
-        List<UpdateItem<T>> result = new ArrayList<>();
+    private ChangesBundle<T> prepareChangesBundle(ArrayMap<String, T> originalData, Map<String, T> newData) {
+        ChangesBundle<T> changes = new ChangesBundle<>();
 
-        for (Map.Entry<String, T> newEntry : newData.entrySet()) {
-            T newItem = newEntry.getValue();
-            int originalItemIndex = originalData.indexOfKey(newEntry.getKey());
+        for (Map.Entry<String, T> entry : newData.entrySet()) {
+            T item = entry.getValue();
+            int originalItemIndex = originalData.indexOfKey(entry.getKey());
 
-            if (originalItemIndex == -1) {
+            if (originalItemIndex < 0) {
                 // new item was added
-                result.add(UpdateItem.added(newItem));
-            } else if (newItem == null) {
+                changes.addNewItem(item);
+                originalData.put(entry.getKey(), item);
+            } else if (item == null) {
                 // item was deleted
-                result.add(UpdateItem.<T>deleted(originalItemIndex));
+                changes.addDeletedItemPosition(originalItemIndex);
                 originalData.removeAt(originalItemIndex);
             } else {
                 // item was updated
                 T originalItem = originalData.valueAt(originalItemIndex);
-                T updatedItem = originalItem.update(newItem);
+                T updatedItem = originalItem.update(item);
 
+                changes.addUpdatedItem(updatedItem, originalItemIndex);
                 originalData.setValueAt(originalItemIndex, updatedItem);
-                result.add(UpdateItem.updated(updatedItem, originalItemIndex));
             }
         }
 
-        return result;
+        return changes;
     }
 
-    public static class Result<T> {
-        @Nullable
-        private final List<T> mOriginalData;
+    public static class ChangesBundle<T> {
 
         @Nullable
-        private final List<UpdateItem<T>> mUpdateData;
+        private List<T> mNewItems;
 
-        private Result(@Nullable List<T> originalData, @Nullable List<UpdateItem<T>> updateData) {
-            mOriginalData = originalData;
-            mUpdateData = updateData;
+        @Nullable
+        private List<ItemWithPosition<T>> mUpdatedItems;
+
+        @Nullable
+        private List<Integer> mDeletedItemsPositions;
+
+        private void addNewItem(T newItem) {
+            if (mNewItems == null) {
+                mNewItems = new ArrayList<>();
+            }
+
+            mNewItems.add(newItem);
+        }
+
+        private void addUpdatedItem(T updatedItem, int position) {
+            if (mUpdatedItems == null) {
+                mUpdatedItems = new ArrayList<>();
+            }
+
+            mUpdatedItems.add(new ItemWithPosition<>(updatedItem, position));
+        }
+
+        private void addDeletedItemPosition(int position) {
+            if (mDeletedItemsPositions == null) {
+                mDeletedItemsPositions = new ArrayList<>();
+            }
+
+            mDeletedItemsPositions.add(position);
         }
 
         @Nullable
-        public List<T> getOriginalData() {
-            return mOriginalData;
+        public List<T> getNewItems() {
+            return mNewItems;
         }
 
         @Nullable
-        public List<UpdateItem<T>> getUpdateData() {
-            return mUpdateData;
+        public List<ItemWithPosition<T>> getUpdatedItems() {
+            return mUpdatedItems;
         }
 
-        public boolean isOriginalDataResult() {
-            return mOriginalData != null;
+        @Nullable
+        public List<Integer> getDeletedItemsPositions() {
+            return mDeletedItemsPositions;
         }
 
-        public static <T> Result<T> withOriginalData(List<T> originalData) {
-            return new Result<>(originalData, null);
-        }
-
-        public static <T> Result<T> withUpdateData(List<UpdateItem<T>> updateData) {
-            return new Result<>(null, updateData);
+        @Override
+        public String toString() {
+            return "ChangesBundle{" +
+                    "\nmNewItems=" + mNewItems +
+                    "\n, mUpdatedItems=" + mUpdatedItems +
+                    "\n, mDeletedItemsPositions=" + mDeletedItemsPositions +
+                    '}';
         }
     }
 
-    public static class UpdateItem<T> {
-        public enum Type {
-            ADDED, DELETED, UPDATED
-        }
-
-        private final Type mType;
-
+    public static class ItemWithPosition<T> {
         @Nullable
         private final T mItem;
 
-        private final int mPositionInDataSet;
+        private final int mPosition;
 
-        public Type getType() {
-            return mType;
+
+        public ItemWithPosition(@Nullable T item, int position) {
+            mItem = item;
+            mPosition = position;
         }
 
         @Nullable
@@ -126,34 +149,15 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
             return mItem;
         }
 
-        public int getPositionInDataSet() {
-            return mPositionInDataSet;
-        }
-
-        private UpdateItem(Type type, @Nullable T item, int positionInDataSet) {
-            mType = type;
-            mItem = item;
-            mPositionInDataSet = positionInDataSet;
-        }
-
-        public static <T> UpdateItem<T> deleted(int position) {
-            return new UpdateItem<>(Type.DELETED, null, position);
-        }
-
-        public static <T> UpdateItem<T> added(T item) {
-            return new UpdateItem<>(Type.ADDED, item, -1);
-        }
-
-        public static <T> UpdateItem<T> updated(T item, int position) {
-            return new UpdateItem<>(Type.UPDATED, item, position);
+        public int getPosition() {
+            return mPosition;
         }
 
         @Override
         public String toString() {
-            return "UpdateItem{" +
-                    "mType=" + mType +
-                    ", mItem=" + mItem +
-                    ", mPositionInDataSet=" + mPositionInDataSet +
+            return "ItemWithPosition{" +
+                    "mItem=" + mItem +
+                    ", mPosition=" + mPosition +
                     '}';
         }
     }

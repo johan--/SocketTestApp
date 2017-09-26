@@ -2,13 +2,16 @@ package com.surinov.alexander.sockettestapp.ui.sports;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.surinov.alexander.sockettestapp.data.repository.SwarmRepository;
 import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmDataTransformer;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmDataTransformer.ChangesBundle;
 import com.surinov.alexander.sockettestapp.data.source.request.SportsRequest;
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
+import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
 import java.util.Map;
@@ -27,10 +30,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
     @Nullable
     private Subscription mSubscription;
 
-    @Nullable
-    private SportsResponse mOriginalData;
-
-    private final SwarmDataTransformer<SportsResponse.SportItem> mSwarmDataTransformer = new SwarmDataTransformer<>();
+    private final SwarmDataTransformer<SportItem> mSwarmDataTransformer = new SwarmDataTransformer<>();
 
     SportsPresenter(@NonNull SwarmRepository swarmRepository) {
         mSwarmRepository = swarmRepository;
@@ -49,18 +49,18 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
             return;
         }
 
-        final SportsRequest sportsRequest = new SportsRequest(/*live sport events*/ 1, /*subscribe for updates*/ true);
+        SportsRequest sportsRequest = new SportsRequest(/*live sport events*/ 1, /*subscribe for updates*/ true);
 
         mSubscription = mSwarmRepository.fetchSwarmDataObservable(SportsResponse.class, sportsRequest)
-                .map(new Func1<SportsResponse, Map<String, SportsResponse.SportItem>>() {
+                .map(new Func1<SportsResponse, Map<String, SportItem>>() {
                     @Override
-                    public Map<String, SportsResponse.SportItem> call(SportsResponse sportsResponse) {
+                    public Map<String, SportItem> call(SportsResponse sportsResponse) {
                         return sportsResponse.getSportMap();
                     }
                 })
                 .compose(mSwarmDataTransformer)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<SwarmDataTransformer.Result<SportsResponse.SportItem>>() {
+                .subscribe(new Subscriber<ChangesBundle<SportItem>>() {
                     @Override
                     public void onCompleted() {
                         Logger.d("SportsPresenter.fetchSports.onCompleted");
@@ -72,13 +72,9 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
                     }
 
                     @Override
-                    public void onNext(SwarmDataTransformer.Result<SportsResponse.SportItem> result) {
-                        Logger.d("SportsPresenter.fetchSports.onNext: " + result);
-                        if (result.isOriginalDataResult()) {
-                            getViewState().setSportItems(result.getOriginalData());
-                        } else {
-                            getViewState().updateSportItems(result.getUpdateData());
-                        }
+                    public void onNext(ChangesBundle<SportItem> changesBundle) {
+                        Logger.d("SportsPresenter.fetchSports.onNext: " + changesBundle);
+                        getViewState().onDataChanged(changesBundle);
                     }
                 });
     }

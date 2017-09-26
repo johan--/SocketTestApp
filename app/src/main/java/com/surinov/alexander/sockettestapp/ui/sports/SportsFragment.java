@@ -11,12 +11,9 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.surinov.alexander.sockettestapp.R;
 import com.surinov.alexander.sockettestapp.data.provider.SwarmRepositoryProvider;
-import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmDataTransformer;
-import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmDataTransformer.ChangesBundle;
+import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
 import com.surinov.alexander.sockettestapp.utils.Logger;
-
-import java.util.List;
-import java.util.Map;
 
 public class SportsFragment extends MvpAppCompatFragment implements SportsView {
 
@@ -57,12 +54,7 @@ public class SportsFragment extends MvpAppCompatFragment implements SportsView {
     }
 
     @Override
-    public void setSportItems(List<SportsResponse.SportItem> sportItems) {
-        Logger.d("SimpleFragment.onViewCreated.setSportItems: " + sportItems);
-    }
-
-    @Override
-    public void updateSportItems(List<SwarmDataTransformer.UpdateItem<SportsResponse.SportItem>> updateItems) {
-        Logger.d("SimpleFragment.onViewCreated.updateSportItems: " + updateItems);
+    public void onDataChanged(ChangesBundle<SportItem> changesBundle) {
+        Logger.d("SimpleFragment.onViewCreated.onDataChanged: " + changesBundle);
     }
 }
