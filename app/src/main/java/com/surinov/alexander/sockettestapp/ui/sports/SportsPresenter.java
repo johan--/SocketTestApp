@@ -2,6 +2,7 @@ package com.surinov.alexander.sockettestapp.ui.sports;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.SimpleArrayMap;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
@@ -41,6 +42,11 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
         fetchSports();
     }
 
+    void fetchCachedData() {
+        SimpleArrayMap<String, SportItem> cachedData = mSwarmDataTransformer.getCachedData();
+        getViewState().onCachedDataSet(cachedData);
+    }
+
     private void fetchSports() {
         Logger.d("SportsPresenter.fetchSports");
 
@@ -73,7 +79,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
                     @Override
                     public void onNext(ChangesBundle<SportItem> changesBundle) {
                         Logger.d("SportsPresenter.fetchSports.onNext: " + changesBundle);
-                        getViewState().onDataChanged(changesBundle);
+                        getViewState().onChangesReceive(changesBundle);
                     }
                 });
     }
