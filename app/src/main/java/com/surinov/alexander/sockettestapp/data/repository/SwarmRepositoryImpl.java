@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
-import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmResponseFilterTransformer;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmResponseTransformer;
 import com.surinov.alexander.sockettestapp.data.rx.transformer.WebSocketResponseTransformer;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
 import com.surinov.alexander.sockettestapp.data.source.request.JsonSerializable;
@@ -53,8 +53,8 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     private Observable<JsonObject> fetchSwarmData(final SwarmRequest swarmRequest) {
-        final SwarmResponseFilterTransformer swarmResponseFilterTransformer =
-                new SwarmResponseFilterTransformer(swarmRequest.gerRequestId());
+        final SwarmResponseTransformer swarmResponseFilterTransformer =
+                new SwarmResponseTransformer(swarmRequest.gerRequestId());
 
         return mDataSource.getWebSocketResponseObservable()
                 .compose(WebSocketResponseTransformer.INSTANCE)
@@ -72,7 +72,7 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                         Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe");
                         if (mDataSource.isConnectionOpened()) {
                             String subId = swarmResponseFilterTransformer.getSubId();
-                            if (!subId.equals(SwarmResponseFilterTransformer.UNSPECIFIED_SUB_ID)) {
+                            if (!subId.equals(SwarmResponseTransformer.UNSPECIFIED_SUB_ID)) {
                                 sendRequest(new UnsubscribeRequest(subId));
                                 Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe: send unsubscribe = " + subId);
                             }

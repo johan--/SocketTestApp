@@ -15,11 +15,15 @@ import rx.functions.Action0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+/**
+ * This {@link rx.Observable.Transformer} class responsible for caching received data
+ * and preparing {@link ChangesBundle} object that will goes to target subscriber.
+ */
 public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.Transformer<Map<String, T>, SwarmDataTransformer.ChangesBundle<T>> {
 
-    private final SimpleArrayMap<String, T> mCachedData = new SimpleArrayMap<>();
+    private final ArrayMap<String, T> mCachedData = new ArrayMap<>();
 
-    public SimpleArrayMap<String, T> getCachedData() {
+    public ArrayMap<String, T> getCachedData() {
         return mCachedData;
     }
 
@@ -46,29 +50,36 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
 
         for (Map.Entry<String, T> entry : newData.entrySet()) {
             T item = entry.getValue();
-            int cachedItemPosition = cachedData.indexOfKey(entry.getKey());
+            int itemIndex = cachedData.indexOfKey(entry.getKey());
 
-            if (cachedItemPosition < 0) {
+            if (itemIndex < 0) {
                 // new item was added
                 changes.addNewItem(item);
                 cachedData.put(entry.getKey(), item);
             } else if (item == null) {
                 // item was deleted
-                changes.addDeletedItemPosition(cachedItemPosition);
-                cachedData.removeAt(cachedItemPosition);
+                T deletedItem = cachedData.valueAt(itemIndex);
+                changes.addDeletedItem(deletedItem, itemIndex);
+                cachedData.removeAt(itemIndex);
             } else {
                 // item already exists and was updated
-                T originalItem = cachedData.valueAt(cachedItemPosition);
+                T originalItem = cachedData.valueAt(itemIndex);
                 T updatedItem = originalItem.update(item);
 
-                changes.addUpdatedItem(updatedItem, cachedItemPosition);
-                cachedData.setValueAt(cachedItemPosition, updatedItem);
+                changes.addUpdatedItem(updatedItem, itemIndex);
+                cachedData.setValueAt(itemIndex, updatedItem);
             }
         }
 
         return changes;
     }
 
+    /**
+     * Value class that holds information about {@link #mNewItems}, {@link #mUpdatedItems}, {@link #mDeletedItems}
+     * and their positions in source data set - {@link this#mCachedData}
+     *
+     * @param <T> - type of data
+     */
     public static class ChangesBundle<T> {
 
         @Nullable
@@ -78,7 +89,7 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
         private List<ItemWithPosition<T>> mUpdatedItems;
 
         @Nullable
-        private List<Integer> mDeletedItemsPositions;
+        private List<ItemWithPosition<T>> mDeletedItems;
 
         private void addNewItem(T newItem) {
             if (mNewItems == null) {
@@ -96,12 +107,12 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
             mUpdatedItems.add(new ItemWithPosition<>(updatedItem, position));
         }
 
-        private void addDeletedItemPosition(int position) {
-            if (mDeletedItemsPositions == null) {
-                mDeletedItemsPositions = new ArrayList<>();
+        private void addDeletedItem(T deletedItem, int position) {
+            if (mDeletedItems == null) {
+                mDeletedItems = new ArrayList<>();
             }
 
-            mDeletedItemsPositions.add(position);
+            mDeletedItems.add(new ItemWithPosition<>(deletedItem, position));
         }
 
         @Nullable
@@ -115,8 +126,8 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
         }
 
         @Nullable
-        public List<Integer> getDeletedItemsPositions() {
-            return mDeletedItemsPositions;
+        public List<ItemWithPosition<T>> getDeletedItems() {
+            return mDeletedItems;
         }
 
         @Override
@@ -124,7 +135,7 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
             return "ChangesBundle{" +
                     "\nmNewItems=" + mNewItems +
                     "\n, mUpdatedItems=" + mUpdatedItems +
-                    "\n, mDeletedItemsPositions=" + mDeletedItemsPositions +
+                    "\n, mDeletedItems=" + mDeletedItems +
                     '}';
         }
     }

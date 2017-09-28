@@ -11,7 +11,13 @@ import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
-public class SwarmResponseFilterTransformer implements Observable.Transformer<SwarmResponse, JsonObject> {
+/**
+ * This {@link rx.Observable.Transformer} class responsible for filter {@link SwarmResponse's}
+ * using {@link #mRequestId} and {@link #mSubId}.
+ * <p>
+ * Using this transformer, we can be sure that each subscriber will receive only his data.
+ */
+public class SwarmResponseTransformer implements Observable.Transformer<SwarmResponse, JsonObject> {
 
     public static final String UNSPECIFIED_SUB_ID = "unspecified";
 
@@ -23,7 +29,7 @@ public class SwarmResponseFilterTransformer implements Observable.Transformer<Sw
         return mSubId;
     }
 
-    public SwarmResponseFilterTransformer(long requestId) {
+    public SwarmResponseTransformer(long requestId) {
         mRequestId = requestId;
     }
 

@@ -11,7 +11,7 @@
         }
     </string>
 
-    <string name="swarm_unsubscribe_request" formatted="false" translatable="false">
+    <string name="swarm_unsubscribe_request" translatable="false">
         {
             \"command\": \"unsubscribe\",
             \"params\": {
@@ -20,7 +20,7 @@
         }
     </string>
 
-    <string name="swarm_sports_request" formatted="false" translatable="false">
+    <string name="swarm_sports_request" translatable="false">
         {
             \"command\": \"get\",
             \"rid\": %1$d,

@@ -2,9 +2,6 @@ package com.surinov.alexander.sockettestapp.data.source.response;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class SportsResponse {
@@ -14,10 +11,6 @@ public class SportsResponse {
 
     public Map<String, SportItem> getSportMap() {
         return mSportMap;
-    }
-
-    public List<SportItem> getSportItems() {
-        return mSportMap.isEmpty() ? Collections.<SportItem>emptyList() : new ArrayList<>(mSportMap.values());
     }
 
     @Override

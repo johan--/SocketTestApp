@@ -8,9 +8,7 @@ import java.util.List;
 
 /**
  * This strategy will clear current commands queue and then incoming command will be put in.
- * And this command will be removed after first execution.
- *
- * @author Alexander Surinov
+ * This incoming command will be removed after first execution.
  */
 public class ClearStateStrategy implements StateStrategy {
     @Override

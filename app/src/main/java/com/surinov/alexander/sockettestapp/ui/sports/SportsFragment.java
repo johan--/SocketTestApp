@@ -2,8 +2,6 @@ package com.surinov.alexander.sockettestapp.ui.sports;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.util.ArrayMap;
-import android.support.v4.util.SimpleArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +15,7 @@ import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmDataTransfor
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
-import java.util.Collections;
+import java.util.List;
 
 public class SportsFragment extends MvpAppCompatFragment implements SportsView {
 
@@ -64,12 +62,12 @@ public class SportsFragment extends MvpAppCompatFragment implements SportsView {
     }
 
     @Override
-    public void onCachedDataSet(SimpleArrayMap<String, SportItem> cachedData) {
+    public void onCachedDataSet(List<SportItem> cachedData) {
         Logger.d("SimpleFragment.onViewCreated.onCachedDataSet: " + cachedData);
     }
 
     @Override
-    public void onChangesReceive(ChangesBundle<SportItem> changesBundle) {
-        Logger.d("SimpleFragment.onViewCreated.onChangesReceive: " + changesBundle);
+    public void onDataChanged(ChangesBundle<SportItem> changesBundle) {
+        Logger.d("SimpleFragment.onViewCreated.onDataChanged: " + changesBundle);
     }
 }

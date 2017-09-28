@@ -2,6 +2,7 @@ package com.surinov.alexander.sockettestapp.ui.sports;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.util.SimpleArrayMap;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -14,6 +15,7 @@ import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import rx.Subscriber;
@@ -39,16 +41,16 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
     @Override
     public void attachView(SportsView view) {
         super.attachView(view);
-        fetchSports();
+        fetchData();
     }
 
     void fetchCachedData() {
-        SimpleArrayMap<String, SportItem> cachedData = mSwarmDataTransformer.getCachedData();
-        getViewState().onCachedDataSet(cachedData);
+        ArrayMap<String, SportItem> cachedData = mSwarmDataTransformer.getCachedData();
+        getViewState().onCachedDataSet(new ArrayList<>(cachedData.values()));
     }
 
-    private void fetchSports() {
-        Logger.d("SportsPresenter.fetchSports");
+    private void fetchData() {
+        Logger.d("SportsPresenter.fetchData");
 
         if (mSubscription != null && !mSubscription.isUnsubscribed()) {
             return;
@@ -68,18 +70,18 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
                 .subscribe(new Subscriber<ChangesBundle<SportItem>>() {
                     @Override
                     public void onCompleted() {
-                        Logger.d("SportsPresenter.fetchSports.onCompleted");
+                        Logger.d("SportsPresenter.fetchData.onCompleted");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Logger.d("SportsPresenter.fetchSports.onError: " + e);
+                        Logger.d("SportsPresenter.fetchData.onError: " + e);
                     }
 
                     @Override
                     public void onNext(ChangesBundle<SportItem> changesBundle) {
-                        Logger.d("SportsPresenter.fetchSports.onNext: " + changesBundle);
-                        getViewState().onChangesReceive(changesBundle);
+                        Logger.d("SportsPresenter.fetchData.onNext: " + changesBundle);
+                        getViewState().onDataChanged(changesBundle);
                     }
                 });
     }

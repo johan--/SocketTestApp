@@ -10,13 +10,21 @@ import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
+/**
+ * This {@link rx.Observable.Transformer} class responsible for filter {@link WebSocketResponse's}.
+ * <p>
+ * Each {@link WebSocketResponse} can represent ERROR, NEXT or COMPLETED event.
+ * <p>
+ * If {@link WebSocketResponse} is ERROR event than we throw {@link SocketException}
+ * and all subscribers will finished with onError.
+ * <p>
+ * If {@link WebSocketResponse} is COMPLETED event than all subscribers will finished with onCompleted.
+ * <p>
+ * If {@link WebSocketResponse} is NEXT event than it goes on and map to {@link SwarmResponse} object
+ */
 public class WebSocketResponseTransformer implements Observable.Transformer<WebSocketResponse, SwarmResponse> {
 
     public static final WebSocketResponseTransformer INSTANCE = new WebSocketResponseTransformer();
-
-    private WebSocketResponseTransformer() {
-        // WebSocketResponseTransformer is a single instance class
-    }
 
     @Override
     public Observable<SwarmResponse> call(final Observable<WebSocketResponse> source) {
