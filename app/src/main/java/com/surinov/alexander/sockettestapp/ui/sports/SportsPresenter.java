@@ -3,13 +3,12 @@ package com.surinov.alexander.sockettestapp.ui.sports;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
-import android.support.v4.util.SimpleArrayMap;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.surinov.alexander.sockettestapp.data.repository.SwarmRepository;
-import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmDataTransformer;
-import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmDataTransformer.ChangesBundle;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.ReceivedDataTransformer;
+import com.surinov.alexander.sockettestapp.data.rx.transformer.ReceivedDataTransformer.ChangesBundle;
 import com.surinov.alexander.sockettestapp.data.source.request.SportsRequest;
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
@@ -32,7 +31,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
     @Nullable
     private Subscription mSubscription;
 
-    private final SwarmDataTransformer<SportItem> mSwarmDataTransformer = new SwarmDataTransformer<>();
+    private final ReceivedDataTransformer<SportItem> mSwarmDataTransformer = new ReceivedDataTransformer<>();
 
     SportsPresenter(@NonNull SwarmRepository swarmRepository) {
         mSwarmRepository = swarmRepository;
@@ -44,6 +43,14 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
         fetchData();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+        }
+    }
+
     void fetchCachedData() {
         ArrayMap<String, SportItem> cachedData = mSwarmDataTransformer.getCachedData();
         getViewState().onCachedDataSet(new ArrayList<>(cachedData.values()));
@@ -51,7 +58,6 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
 
     private void fetchData() {
         Logger.d("SportsPresenter.fetchData");
-
         if (mSubscription != null && !mSubscription.isUnsubscribed()) {
             return;
         }
@@ -80,7 +86,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
 
                     @Override
                     public void onNext(ChangesBundle<SportItem> changesBundle) {
-                        Logger.d("SportsPresenter.fetchData.onNext: " + changesBundle);
+                        Logger.d("SportsPresenter.fetchData.onNext");
                         getViewState().onDataChanged(changesBundle);
                     }
                 });

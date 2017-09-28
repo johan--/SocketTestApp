@@ -28,7 +28,7 @@ public class SportsResponse {
             mType = newItem.getType() != null ? newItem.getType() : oldItem.getType();
             mName = newItem.getName() != null ? newItem.getName() : oldItem.getName();
             mOrder = newItem.getOrder() != null ? newItem.getOrder() : oldItem.getOrder();
-            mGame = newItem.getGame() != null ? newItem.getGame() : oldItem.getGame();
+            mGameCount = newItem.getGameCount() != null ? newItem.getGameCount() : oldItem.getGameCount();
         }
 
         @SerializedName("id")
@@ -47,7 +47,7 @@ public class SportsResponse {
         private Integer mOrder;
 
         @SerializedName("game")
-        private Integer mGame;
+        private Integer mGameCount;
 
         @Override
         public String toString() {
@@ -57,7 +57,7 @@ public class SportsResponse {
                     ", mType=" + mType +
                     ", mName='" + mName + '\'' +
                     ", mOrder=" + mOrder +
-                    ", mGame=" + mGame +
+                    ", mGameCount=" + mGameCount +
                     '}';
         }
 
@@ -86,8 +86,8 @@ public class SportsResponse {
             return mOrder;
         }
 
-        public Integer getGame() {
-            return mGame;
+        public Integer getGameCount() {
+            return mGameCount;
         }
     }
 }

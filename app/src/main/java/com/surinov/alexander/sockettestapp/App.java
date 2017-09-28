@@ -37,17 +37,17 @@ public class App extends Application {
         public void onActivityStopped(Activity activity) {
             Logger.d("App.onActivityStopped: start close connection timer");
 
-//            mTimerSubscription = Completable.complete()
-//                    .delay(5, TimeUnit.SECONDS)
-//                    .subscribe(new Action0() {
-//                        @Override
-//                        public void call() {
-//                            if (mDataSource.isConnectionOpened()) {
-//                                Logger.d("App.onActivityStopped: close connection");
-//                                mDataSource.closeConnection();
-//                            }
-//                        }
-//                    });
+            mTimerSubscription = Completable.complete()
+                    .delay(5, TimeUnit.SECONDS)
+                    .subscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            if (mDataSource.isConnectionOpened()) {
+                                Logger.d("App.onActivityStopped: close connection");
+                                mDataSource.closeConnection();
+                            }
+                        }
+                    });
         }
     };
 

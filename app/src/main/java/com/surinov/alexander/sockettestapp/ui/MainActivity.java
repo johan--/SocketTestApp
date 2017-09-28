@@ -16,9 +16,9 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if (fragmentManager.findFragmentById(R.id.fragmentContainer1) == null) {
+        if (fragmentManager.findFragmentById(R.id.fragmentContainer) == null) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer1, new SportsFragment())
+                    .replace(R.id.fragmentContainer, new SportsFragment())
                     .commit();
         }
     }

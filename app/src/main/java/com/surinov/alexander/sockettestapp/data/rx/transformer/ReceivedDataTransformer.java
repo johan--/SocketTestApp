@@ -17,9 +17,9 @@ import rx.schedulers.Schedulers;
 
 /**
  * This {@link rx.Observable.Transformer} class responsible for caching received data
- * and preparing {@link ChangesBundle} object that will goes to target subscriber.
+ * and preparing {@link ChangesBundle} object that will go to target subscriber.
  */
-public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.Transformer<Map<String, T>, SwarmDataTransformer.ChangesBundle<T>> {
+public class ReceivedDataTransformer<T extends Updatable<T>> implements Observable.Transformer<Map<String, T>, ReceivedDataTransformer.ChangesBundle<T>> {
 
     private final ArrayMap<String, T> mCachedData = new ArrayMap<>();
 
@@ -134,8 +134,8 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
         public String toString() {
             return "ChangesBundle{" +
                     "\nmNewItems=" + mNewItems +
-                    "\n, mUpdatedItems=" + mUpdatedItems +
-                    "\n, mDeletedItems=" + mDeletedItems +
+                    "\nmUpdatedItems=" + mUpdatedItems +
+                    "\nmDeletedItems=" + mDeletedItems + "\n" +
                     '}';
         }
     }
@@ -147,7 +147,7 @@ public class SwarmDataTransformer<T extends Updatable<T>> implements Observable.
         private final int mPosition;
 
 
-        public ItemWithPosition(@Nullable T item, int position) {
+        ItemWithPosition(@Nullable T item, int position) {
             mItem = item;
             mPosition = position;
         }
