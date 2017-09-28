@@ -63,7 +63,7 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                     @Override
                     public void call() {
                         Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnSubscribe");
-                        sendRequest(swarmRequest);
+                        mDataSource.sendRequest(swarmRequest);
                     }
                 })
                 .doOnUnsubscribe(new Action0() {
@@ -73,16 +73,11 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                         if (mDataSource.isConnectionOpened()) {
                             String subId = swarmResponseFilterTransformer.getSubId();
                             if (!subId.equals(SwarmResponseTransformer.UNSPECIFIED_SUB_ID)) {
-                                sendRequest(new UnsubscribeRequest(subId));
+                                mDataSource.sendRequest(new UnsubscribeRequest(subId));
                                 Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe: send unsubscribe = " + subId);
                             }
                         }
                     }
                 });
-    }
-
-    private void sendRequest(JsonSerializable request) {
-        String jsonStringRequest = request.toJsonString();
-        mDataSource.sendRequest(jsonStringRequest);
     }
 }

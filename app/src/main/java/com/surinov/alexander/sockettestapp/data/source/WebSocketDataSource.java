@@ -3,6 +3,7 @@ package com.surinov.alexander.sockettestapp.data.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.surinov.alexander.sockettestapp.data.source.request.JsonSerializable;
 import com.surinov.alexander.sockettestapp.data.source.request.SessionRequest;
 import com.surinov.alexander.sockettestapp.data.source.response.WebSocketResponse;
 import com.surinov.alexander.sockettestapp.utils.Logger;
@@ -93,10 +94,10 @@ public class WebSocketDataSource implements DataSource {
     }
 
     @Override
-    public synchronized void sendRequest(String jsonStringRequest) {
+    public synchronized void sendRequest(JsonSerializable request) {
         openConnectionIfNeeded();
         if (mWebSocket != null) {
-            mWebSocket.send(jsonStringRequest);
+            mWebSocket.send(request.toJsonString());
         }
     }
 
@@ -125,7 +126,8 @@ public class WebSocketDataSource implements DataSource {
                 .build();
 
         WebSocket webSocket = mWebSocket = mOkHttpClient.newWebSocket(openConnectionRequest, mWebSocketListener); // open connection
-        String request = new SessionRequest().toJsonString();
-        webSocket.send(request); // request session
+
+        SessionRequest sessionRequest = new SessionRequest();
+        webSocket.send(sessionRequest.toJsonString()); // request session
     }
 }
