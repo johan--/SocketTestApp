@@ -20,6 +20,7 @@ public class SportsResponse {
                 '}';
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class SportItem implements Updatable<SportItem> {
 
         private SportItem(SportItem oldItem, SportItem newItem) {

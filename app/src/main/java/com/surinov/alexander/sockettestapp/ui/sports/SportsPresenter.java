@@ -64,7 +64,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
 
         SportsRequest sportsRequest = new SportsRequest(/*live sport events*/ 1, /*subscribe for updates*/ true);
 
-        mSubscription = mSwarmRepository.fetchSwarmDataObservable(SportsResponse.class, sportsRequest)
+        mSubscription = mSwarmRepository.fetchObservableSwarmData(SportsResponse.class, sportsRequest)
                 .map(new Func1<SportsResponse, Map<String, SportItem>>() {
                     @Override
                     public Map<String, SportItem> call(SportsResponse sportsResponse) {

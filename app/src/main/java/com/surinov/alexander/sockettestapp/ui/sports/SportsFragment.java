@@ -77,7 +77,7 @@ public class SportsFragment extends MvpAppCompatFragment implements SportsView {
         }
 
         if (changesBundle.getDeletedItems() != null) {
-            for (ItemWithPosition<SportItem> itemWithPosition : changesBundle.getUpdatedItems()) {
+            for (ItemWithPosition<SportItem> itemWithPosition : changesBundle.getDeletedItems()) {
                 mAdapter.deleteItem(itemWithPosition.getPosition());
             }
         }
