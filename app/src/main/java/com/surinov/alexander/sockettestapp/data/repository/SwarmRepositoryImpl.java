@@ -7,7 +7,6 @@ import com.surinov.alexander.sockettestapp.data.provider.GsonProvider;
 import com.surinov.alexander.sockettestapp.data.rx.transformer.SwarmResponseTransformer;
 import com.surinov.alexander.sockettestapp.data.rx.transformer.WebSocketResponseTransformer;
 import com.surinov.alexander.sockettestapp.data.source.DataSource;
-import com.surinov.alexander.sockettestapp.data.source.request.JsonSerializable;
 import com.surinov.alexander.sockettestapp.data.source.request.SwarmRequest;
 import com.surinov.alexander.sockettestapp.data.source.request.UnsubscribeRequest;
 import com.surinov.alexander.sockettestapp.utils.Logger;
@@ -53,12 +52,12 @@ public class SwarmRepositoryImpl implements SwarmRepository {
     }
 
     private Observable<JsonObject> fetchSwarmData(final SwarmRequest swarmRequest) {
-        final SwarmResponseTransformer swarmResponseFilterTransformer =
-                new SwarmResponseTransformer(swarmRequest.gerRequestId());
+
+        final SwarmResponseTransformer transformer = new SwarmResponseTransformer(swarmRequest.gerRequestId());
 
         return mDataSource.getWebSocketResponseObservable()
                 .compose(WebSocketResponseTransformer.INSTANCE)
-                .compose(swarmResponseFilterTransformer)
+                .compose(transformer)
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -71,7 +70,7 @@ public class SwarmRepositoryImpl implements SwarmRepository {
                     public void call() {
                         Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe");
                         if (mDataSource.isConnectionOpened()) {
-                            String subId = swarmResponseFilterTransformer.getSubId();
+                            String subId = transformer.getSubId();
                             if (!subId.equals(SwarmResponseTransformer.UNSPECIFIED_SUB_ID)) {
                                 mDataSource.sendRequest(new UnsubscribeRequest(subId));
                                 Logger.d("SportLiveEventsRepositoryImpl.fetchSwarmData.doOnUnsubscribe: send unsubscribe = " + subId);

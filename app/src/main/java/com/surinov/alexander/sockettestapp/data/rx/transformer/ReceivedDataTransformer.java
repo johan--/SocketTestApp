@@ -3,6 +3,7 @@ package com.surinov.alexander.sockettestapp.data.rx.transformer;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.util.SimpleArrayMap;
+import android.support.v7.util.SortedList;
 
 import com.surinov.alexander.sockettestapp.data.source.response.Updatable;
 
@@ -59,14 +60,14 @@ public class ReceivedDataTransformer<T extends Updatable<T>> implements Observab
             } else if (item == null) {
                 // item was deleted
                 T deletedItem = cachedData.valueAt(itemIndex);
-                changes.addDeletedItem(deletedItem, itemIndex);
+                changes.addDeletedItem(deletedItem);
                 cachedData.removeAt(itemIndex);
             } else {
                 // item already exists and was updated
                 T originalItem = cachedData.valueAt(itemIndex);
                 T updatedItem = originalItem.update(item);
 
-                changes.addUpdatedItem(updatedItem, itemIndex);
+                changes.addUpdatedItem(updatedItem);
                 cachedData.setValueAt(itemIndex, updatedItem);
             }
         }
@@ -76,7 +77,6 @@ public class ReceivedDataTransformer<T extends Updatable<T>> implements Observab
 
     /**
      * Value class that holds information about {@link #mNewItems}, {@link #mUpdatedItems}, {@link #mDeletedItems}
-     * and their positions in source data set - {@link this#mCachedData}
      *
      * @param <T> - type of data
      */
@@ -86,10 +86,10 @@ public class ReceivedDataTransformer<T extends Updatable<T>> implements Observab
         private List<T> mNewItems;
 
         @Nullable
-        private List<ItemWithPosition<T>> mUpdatedItems;
+        private List<T> mUpdatedItems;
 
         @Nullable
-        private List<ItemWithPosition<T>> mDeletedItems;
+        private List<T> mDeletedItems;
 
         private void addNewItem(T newItem) {
             if (mNewItems == null) {
@@ -99,20 +99,20 @@ public class ReceivedDataTransformer<T extends Updatable<T>> implements Observab
             mNewItems.add(newItem);
         }
 
-        private void addUpdatedItem(T updatedItem, int position) {
+        private void addUpdatedItem(T updatedItem) {
             if (mUpdatedItems == null) {
                 mUpdatedItems = new ArrayList<>();
             }
 
-            mUpdatedItems.add(new ItemWithPosition<>(updatedItem, position));
+            mUpdatedItems.add(updatedItem);
         }
 
-        private void addDeletedItem(T deletedItem, int position) {
+        private void addDeletedItem(T deletedItem) {
             if (mDeletedItems == null) {
                 mDeletedItems = new ArrayList<>();
             }
 
-            mDeletedItems.add(new ItemWithPosition<>(deletedItem, position));
+            mDeletedItems.add(deletedItem);
         }
 
         @Nullable
@@ -121,12 +121,12 @@ public class ReceivedDataTransformer<T extends Updatable<T>> implements Observab
         }
 
         @Nullable
-        public List<ItemWithPosition<T>> getUpdatedItems() {
+        public List<T> getUpdatedItems() {
             return mUpdatedItems;
         }
 
         @Nullable
-        public List<ItemWithPosition<T>> getDeletedItems() {
+        public List<T> getDeletedItems() {
             return mDeletedItems;
         }
 
@@ -136,36 +136,6 @@ public class ReceivedDataTransformer<T extends Updatable<T>> implements Observab
                     "\nmNewItems=" + mNewItems +
                     "\nmUpdatedItems=" + mUpdatedItems +
                     "\nmDeletedItems=" + mDeletedItems + "\n" +
-                    '}';
-        }
-    }
-
-    public static class ItemWithPosition<T> {
-        @Nullable
-        private final T mItem;
-
-        private final int mPosition;
-
-
-        ItemWithPosition(@Nullable T item, int position) {
-            mItem = item;
-            mPosition = position;
-        }
-
-        @Nullable
-        public T getItem() {
-            return mItem;
-        }
-
-        public int getPosition() {
-            return mPosition;
-        }
-
-        @Override
-        public String toString() {
-            return "ItemWithPosition{" +
-                    "mItem=" + mItem +
-                    ", mPosition=" + mPosition +
                     '}';
         }
     }

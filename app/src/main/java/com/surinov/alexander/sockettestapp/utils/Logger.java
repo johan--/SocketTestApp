@@ -8,7 +8,7 @@ public class Logger {
     private static final String TAG = "DebugTag";
 
     private Logger() {
-        throw new AssertionError("Util class not instantiated");
+        throw new AssertionError("Utility class not instantiated");
     }
 
     public static void d(String message) {

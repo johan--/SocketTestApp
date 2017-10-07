@@ -15,11 +15,10 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.surinov.alexander.sockettestapp.R;
 import com.surinov.alexander.sockettestapp.data.provider.SwarmRepositoryProvider;
 import com.surinov.alexander.sockettestapp.data.rx.transformer.ReceivedDataTransformer.ChangesBundle;
-import com.surinov.alexander.sockettestapp.data.rx.transformer.ReceivedDataTransformer.ItemWithPosition;
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
-import java.util.List;
+import java.util.Collection;
 
 public class SportsFragment extends MvpAppCompatFragment implements SportsView {
 
@@ -57,29 +56,14 @@ public class SportsFragment extends MvpAppCompatFragment implements SportsView {
     }
 
     @Override
-    public void onCachedDataSet(@NonNull List<SportItem> cachedData) {
-        Logger.d("SimpleFragment.onViewCreated.onCachedDataSet: " + cachedData);
-        mAdapter.addItems(cachedData);
+    public void onCachedDataLoaded(@NonNull Collection<SportItem> cachedData) {
+        Logger.d("SimpleFragment.onViewCreated.onCachedDataLoaded: " + cachedData);
+        mAdapter.setData(cachedData);
     }
 
     @Override
     public void onDataChanged(@NonNull ChangesBundle<SportItem> changesBundle) {
         Logger.d("SimpleFragment.onViewCreated.onDataChanged: " + changesBundle);
-
-        if (changesBundle.getNewItems() != null) {
-            mAdapter.addItems(changesBundle.getNewItems());
-        }
-
-        if (changesBundle.getUpdatedItems() != null) {
-            for (ItemWithPosition<SportItem> itemWithPosition : changesBundle.getUpdatedItems()) {
-                mAdapter.updateItem(itemWithPosition);
-            }
-        }
-
-        if (changesBundle.getDeletedItems() != null) {
-            for (ItemWithPosition<SportItem> itemWithPosition : changesBundle.getDeletedItems()) {
-                mAdapter.deleteItem(itemWithPosition.getPosition());
-            }
-        }
+        mAdapter.onDataChanged(changesBundle);
     }
 }

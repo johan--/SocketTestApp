@@ -62,10 +62,10 @@ public class WebSocketDataSource implements DataSource {
         }
 
         @Override
-        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Logger.d("WebSocketDataSource.WebSocketListener.onFailure: " + t);
+        public void onFailure(WebSocket webSocket, Throwable throwable, Response response) {
+            Logger.d("WebSocketDataSource.WebSocketListener.onFailure: " + throwable);
             mConnectionState = ConnectionState.CLOSED;
-            pushDataIfHasObservers(WebSocketResponse.error(t), mWebSocketResponseSubject);
+            pushDataIfHasObservers(WebSocketResponse.error(throwable), mWebSocketResponseSubject);
         }
     };
 

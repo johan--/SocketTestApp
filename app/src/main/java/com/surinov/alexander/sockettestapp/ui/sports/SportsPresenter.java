@@ -14,7 +14,6 @@ import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse;
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
 import com.surinov.alexander.sockettestapp.utils.Logger;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import rx.Subscriber;
@@ -31,7 +30,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
     @Nullable
     private Subscription mSubscription;
 
-    private final ReceivedDataTransformer<SportItem> mSwarmDataTransformer = new ReceivedDataTransformer<>();
+    private final ReceivedDataTransformer<SportItem> mReceivedDataTransformer = new ReceivedDataTransformer<>();
 
     SportsPresenter(@NonNull SwarmRepository swarmRepository) {
         mSwarmRepository = swarmRepository;
@@ -52,8 +51,8 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
     }
 
     void fetchCachedData() {
-        ArrayMap<String, SportItem> cachedData = mSwarmDataTransformer.getCachedData();
-        getViewState().onCachedDataSet(new ArrayList<>(cachedData.values()));
+        ArrayMap<String, SportItem> cachedData = mReceivedDataTransformer.getCachedData();
+        getViewState().onCachedDataLoaded(cachedData.values());
     }
 
     private void fetchData() {
@@ -71,7 +70,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
                         return sportsResponse.getSportMap();
                     }
                 })
-                .compose(mSwarmDataTransformer)
+                .compose(mReceivedDataTransformer)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ChangesBundle<SportItem>>() {
                     @Override

@@ -9,12 +9,13 @@ import com.surinov.alexander.sockettestapp.data.rx.transformer.ReceivedDataTrans
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
 import com.surinov.alexander.sockettestapp.utils.strategy.ClearStateStrategy;
 
+import java.util.Collection;
 import java.util.List;
 
 interface SportsView extends MvpView {
 
     @StateStrategyType(value = ClearStateStrategy.class)
-    void onCachedDataSet(@NonNull List<SportItem> cachedData);
+    void onCachedDataLoaded(@NonNull Collection<SportItem> cachedData);
 
     @StateStrategyType(value = OneExecutionStateStrategy.class)
     void onDataChanged(@NonNull ChangesBundle<SportItem> changesBundle);

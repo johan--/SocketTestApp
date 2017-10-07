@@ -11,7 +11,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * This {@link rx.Observable.Transformer} class responsible for filter {@link WebSocketResponse's}.
+ * This {@link rx.Observable.Transformer} class responsible for filter {@link WebSocketResponse's}
  * <p>
  * Each {@link WebSocketResponse} can represent ERROR, NEXT or COMPLETED event.
  * <p>
