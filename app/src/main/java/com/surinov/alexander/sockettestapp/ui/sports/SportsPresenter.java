@@ -51,8 +51,7 @@ public class SportsPresenter extends MvpPresenter<SportsView> {
     }
 
     void fetchCachedData() {
-        ArrayMap<String, SportItem> cachedData = mReceivedDataTransformer.getCachedData();
-        getViewState().onCachedDataLoaded(cachedData.values());
+        getViewState().onCachedDataLoaded(mReceivedDataTransformer.getCachedData());
     }
 
     private void fetchData() {

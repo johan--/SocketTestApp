@@ -3,11 +3,11 @@ package com.surinov.alexander.sockettestapp.data.rx.transformer;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.util.SimpleArrayMap;
-import android.support.v7.util.SortedList;
 
 import com.surinov.alexander.sockettestapp.data.source.response.Updatable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -18,14 +18,15 @@ import rx.schedulers.Schedulers;
 
 /**
  * This {@link rx.Observable.Transformer} class responsible for caching received data
- * and preparing {@link ChangesBundle} object that will go to target subscriber.
+ * and preparing {@link ChangesBundle} object that holds information
+ * about any changes that happened with source cached data.
  */
 public class ReceivedDataTransformer<T extends Updatable<T>> implements Observable.Transformer<Map<String, T>, ReceivedDataTransformer.ChangesBundle<T>> {
 
     private final ArrayMap<String, T> mCachedData = new ArrayMap<>();
 
-    public ArrayMap<String, T> getCachedData() {
-        return mCachedData;
+    public Collection<T> getCachedData() {
+        return mCachedData.values();
     }
 
     @Override

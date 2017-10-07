@@ -18,9 +18,9 @@ import rx.functions.Func1;
  * If {@link WebSocketResponse} is ERROR event than we throw {@link SocketException}
  * and all subscribers will finished with onError.
  * <p>
- * If {@link WebSocketResponse} is COMPLETED event than all subscribers will finished with onCompleted.
+ * If {@link WebSocketResponse} is COMPLETED event than all subscribers will finished with onCompleted event.
  * <p>
- * If {@link WebSocketResponse} is NEXT event than it goes on and map to {@link SwarmResponse} object
+ * If {@link WebSocketResponse} is NEXT event than it goes on and transform to {@link SwarmResponse} object.
  */
 public class WebSocketResponseTransformer implements Observable.Transformer<WebSocketResponse, SwarmResponse> {
 
