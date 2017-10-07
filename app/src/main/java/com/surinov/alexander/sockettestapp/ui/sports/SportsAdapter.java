@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.surinov.alexander.sockettestapp.R;
 import com.surinov.alexander.sockettestapp.data.rx.transformer.ReceivedDataTransformer.ChangesBundle;
 import com.surinov.alexander.sockettestapp.data.source.response.SportsResponse.SportItem;
-import com.surinov.alexander.sockettestapp.utils.CollectionsUtils;
+import com.surinov.alexander.sockettestapp.utils.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -64,19 +64,19 @@ class SportsAdapter extends RecyclerView.Adapter<SportsAdapter.SportViewHolder> 
         mSportItems.beginBatchedUpdates();
 
         List<SportItem> newItems = changesBundle.getNewItems();
-        if (!CollectionsUtils.isNullOrEmpty(newItems)) {
+        if (!CollectionUtils.isNullOrEmpty(newItems)) {
             mSportItems.addAll(newItems);
         }
 
         List<SportItem> deletedItems = changesBundle.getDeletedItems();
-        if (!CollectionsUtils.isNullOrEmpty(deletedItems)) {
+        if (!CollectionUtils.isNullOrEmpty(deletedItems)) {
             for (SportItem deletedItem : deletedItems) {
                 mSportItems.remove(deletedItem);
             }
         }
 
         List<SportItem> updatedItems = changesBundle.getUpdatedItems();
-        if (!CollectionsUtils.isNullOrEmpty(updatedItems)) {
+        if (!CollectionUtils.isNullOrEmpty(updatedItems)) {
             mSportItems.addAll(updatedItems);
         }
 
