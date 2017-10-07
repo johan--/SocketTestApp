@@ -26,6 +26,8 @@ class SportsAdapter extends RecyclerView.Adapter<SportsAdapter.SportViewHolder> 
 
         @Override
         public boolean areContentsTheSame(SportItem oldItem, SportItem newItem) {
+            // always return false and skip comparison of two items
+            // because we know that if we receive new item with same id, it's definitely has new content
             return false;
         }
 
