@@ -4,8 +4,8 @@ import android.support.annotation.Nullable;
 
 import java.util.Collection;
 
-public class CollectionsUtils {
-    private CollectionsUtils() {
+public class CollectionUtils {
+    private CollectionUtils() {
         throw new AssertionError("Utility class not instantiated");
     }
 

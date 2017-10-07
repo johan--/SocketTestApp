@@ -47,7 +47,7 @@ public class ReceivedDataTransformer<T extends Updatable<T>> implements Observab
                 });
     }
 
-    private ChangesBundle<T> prepareChangesBundle(SimpleArrayMap<String, T> cachedData, Map<String, T> newData) {
+    private ChangesBundle<T> prepareChangesBundle(ArrayMap<String, T> cachedData, Map<String, T> newData) {
         ChangesBundle<T> changes = new ChangesBundle<>();
 
         for (Map.Entry<String, T> entry : newData.entrySet()) {
