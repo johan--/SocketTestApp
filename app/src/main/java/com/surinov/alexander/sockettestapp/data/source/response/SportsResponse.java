@@ -15,7 +15,7 @@ public class SportsResponse {
 
     @Override
     public String toString() {
-        return "SwarmSportListResponse{" +
+        return "SportsResponse{" +
                 "mSportMap=" + mSportMap +
                 '}';
     }
@@ -52,7 +52,7 @@ public class SportsResponse {
 
         @Override
         public String toString() {
-            return "SwarmSportResponse{" +
+            return "SportItem{" +
                     "mId=" + mId +
                     ", mAlias='" + mAlias + '\'' +
                     ", mType=" + mType +
